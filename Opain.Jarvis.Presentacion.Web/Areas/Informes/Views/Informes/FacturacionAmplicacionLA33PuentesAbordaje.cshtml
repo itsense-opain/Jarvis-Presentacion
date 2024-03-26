@@ -1,0 +1,209 @@
+﻿@model List<Opain.Jarvis.Dominio.Entidades.Anexo15>
+@inject Opain.Jarvis.Presentacion.Web.Helpers.ServicioComboBox ServicioComboBox
+
+@{
+    ViewData["Title"] = "Facturacion Ampliación LA33 Puentes Abordaje";
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Aerolineas = ServicioComboBox.TraerAerolineas2();
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Tipos = ServicioComboBox.TraerTipos();
+}
+
+<h1>Facturacion Ampliación LA33 Puentes Abordaje</h1>
+
+<partial name="Menu" />
+
+<div class="sin__contenido mb-5">
+    <form asp-action="FacturacionAmplicacionLA33PuentesAbordaje" method="post" id="Accion">
+        @Html.AntiForgeryToken()
+        <div class="bg--white">
+            @if (User.IsInRole("OPAIN") || User.IsInRole("ADMINISTRADOR"))
+            {
+                <div class="row">
+                    <div class="col-sm-3 pt-2">
+                        Aerolinea:
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-inline float-right">
+                            <div class="form-group">
+                                <select class="form-control" name="aerolinea">
+                                    <option value="0">Todas las aerolíneas</option>
+                                    @foreach (Opain.Jarvis.Presentacion.Web.Helpers.TextoValor Tipo in Aerolineas)
+                                    {
+                                        bool Seleccionado = Tipo.Valor.Equals(ViewBag.aerolinea);
+                                        <option value="@Tipo.Valor" selected="@Seleccionado">@Html.Raw(Tipo.Texto)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <hr />
+            <div class="row">
+                <div class="col-sm-3 pt-2">
+                    Seleccione las facturas:
+                </div>
+
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group">
+                            <input id="facturaDesde" name="facturaDesde" class="text-center" placeholder="Factura inicial" aria-describedby="validationTooltipUsernamePrepend" required autocomplete="off" value="@ViewBag.facturaDesde" /> - <input id="facturaHasta" name="facturaHasta" class="text-center" placeholder="Factura Hasta" aria-describedby="validationTooltipUsernamePrepend" required autocomplete="off" value="@ViewBag.facturaHasta" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row" id="divFiltro">
+                <div class="col-sm-3 pt-2">
+                    Seleccione las fechas:
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group  search__date--width">
+                            <img src="~/images/novedad-calendario.png" alt="" />
+                            <input id="startDate" readonly name="startDate" class="text-center" placeholder="Fecha inicial" aria-describedby="validationTooltipUsernamePrepend" required autocomplete="off" value="@ViewBag.startDate" /> - <input id="endDate" readonly name="endDate" class="text-center" placeholder="Fecha final" aria-describedby="validationTooltipUsernamePrepend" required autocomplete="off" value="@ViewBag.endDate" />
+                            <div class="invalid-tooltip">
+                                Por favor escriba o seleccione una fecha valida
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-inline float-right">
+                        <button type="button" class="btn btn--border ml-2" id="btnBuscar">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="bg--white mb-5">
+            @ViewBag.Error
+        </div>
+    }
+
+    @if (Model.Count > 0)
+    {
+        <div class="bg--white mb-5">
+            A continuación se muestra el resultado de su búsqueda
+            <hr />
+            <form asp-action="ExportarExcel" method="post" id="Excel">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-inline float-left">
+                            <button type="button" class="btn btn--border ml-2" id="btnExcel">Exportar Excel</button>
+                            <input id="DatosConsulta" name="DatosConsulta" class="text-center" value="@ViewBag.ConsultaExcel" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table" id="tblConsultasFPLPA">
+                    <thead>
+                        <tr>
+                            <th>Factura</th>
+                            <th>Sigla Aerolìnea</th>
+                            <th>Matrícula</th>
+                            <th>Nombre Aerolìnea</th>
+                            <th># Vuelo Ingreso</th>
+                            <th># Vuelo Salida</th>
+                            <th>Fecha Ingreso</th>
+                            <th>Fecha Salida</th>
+                            <th>Hora Ingreso</th>
+                            <th>Hora Salida</th>
+                            <th>Cantidad</th>
+                            <th>POS</th>
+                            <th>Cobro COP</th>
+                            <th>Total COP</th>
+                            <th>Cobro USD</th>
+                            <th>Total USD</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Opain.Jarvis.Dominio.Entidades.Anexo15 registro in Model)
+                        {
+                            <tr>
+                                <td>@registro.Factura</td>
+                                <td>@registro.SiglaAerolinea</td>
+                                <td>@registro.Matricula</td>
+                                <td>@registro.NombreAerolinea</td>
+                                <td>@registro.VueloIngreso</td>
+                                <td>@registro.VueloSalida</td>
+                                <td>@registro.FechaIngreso</td>
+                                <td>@registro.FechaSalida</td>
+                                <td>@registro.HoraIngreso</td>
+                                <td>@registro.HoraSalida</td>
+                                <td>@registro.Cantidad</td>
+                                <td>@registro.POS</td>
+                                <td>@registro.CobroCOP</td>
+                                <td>@registro.TotalCOP</td>
+                                <td>@registro.CobroUSD</td>
+                                <td>@registro.TotalUSD</td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $("#btnBuscar").click(function (event) {
+            event.preventDefault();
+
+            var fechaInicial = $("#startDate").val();
+            var fechaFinal = $("#endDate").val();
+
+            var facturaInicial = $("#facturaDesde").val();
+            var facturaFinal = $("#facturaHasta").val();
+
+            if (facturaInicial == "") {
+                alert("Factura inicial se encuentra vacia.");
+                return false;
+            }
+
+            if (facturaFinal == "") {
+                alert("Factura hasta se encuentra vacia.");
+                return false;
+            }
+
+
+            $("#Accion").submit()
+            return true;
+
+        });
+        $("#btnExcel").click(function (event) {
+            event.preventDefault();
+
+            $("#Excel").submit()
+            return true;
+
+        });
+    </script>
+
+    <script>
+        $("#tblConsultasFPLPA").DataTable(
+            {
+                //dom: 'Bfrtip',
+                //buttons: [
+                //    {
+                //        extend: 'excelHtml5',
+                //        exportOptions: {
+                //            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                //        }
+                //    },
+                //]
+            }
+        );
+    </script>
+}

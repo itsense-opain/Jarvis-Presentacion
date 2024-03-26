@@ -1,0 +1,559 @@
+﻿
+@model Opain.Jarvis.Dominio.Entidades.AdministracionOtd;
+
+@addTagHelper *, Opain.Jarvis.Presentacion.Web
+
+@{
+    ViewData["Title"] = "Administración";
+}
+<h1>Administración</h1>
+
+<!-- Nav tabs -->
+
+@if (!string.IsNullOrEmpty(ViewData["mensaje"].ToString()))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <p class="mb-0">@ViewData["mensaje"].ToString()</p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
+    <li class="nav-item" onclick="JavaScript: ConsultarNovedadesNotificacionesPendiente();">
+        <a href="#pills-home" class="nav-link active" data-toggle="pill" id="pills-home-tab" role="tab" aria-controls="pills-home" aria-selected="true">
+            Crear y consultar usuarios
+            <span class="arrow-tab"></span>
+        </a>
+    </li>
+    @if (User.IsInRole("ADMINISTRADOR"))
+    {
+        <li class="nav-item" onclick="JavaScript: ConsultarNovedadesNotificacionesPendiente();">
+            <a href="#pills-profile" class="nav-link" data-toggle="pill" id="pills-profile-tab" role="tab" aria-controls="pills-profile" aria-selected="false">
+                Parámetros
+                <span class="arrow-tab"></span>
+            </a>
+        </li>
+    }
+    @if (User.IsInRole("ADMINISTRADOR"))
+    {
+        <li class="nav-item">
+            <a href="#pills-NotificacionVuelosProcesados" class="nav-link" data-toggle="pill" id="pills-NotificacionVuelosProcesados-tab" role="tab" aria-controls="pills-NotificacionVuelosProcesados" aria-selected="false">
+                Notificacion de Vuelos Procesados
+                <span class="arrow-tab"></span>
+            </a>
+        </li>
+    }
+</ul>
+
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+        <div class="bg--white">
+            <span>
+                A continuación podrá gestionar los usuarios de las aerolíneas
+            </span>
+        </div>
+        <div class="bg--white mb-4">
+            <div class="table-responsive absolute__elements">
+                @if (User.IsInRole("SUPERVISOR") || User.IsInRole("SUPERVISOR CARGA"))
+                {
+                    var aerolinea = User.Claims.Where(c => c.Type.Equals("NombreAerolinea")).FirstOrDefault().Value;
+
+                    <vc:usuarios aerolinea="@aerolinea"></vc:usuarios>
+                }
+                else
+                {
+                    <vc:usuarios aerolinea=""></vc:usuarios>
+
+                }
+
+            </div>
+        </div>
+    </div>
+
+    @if (User.IsInRole("ADMINISTRADOR"))
+    {
+        <div class="tab-pane fade mb-5" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Modificar valor de tasa aeroportuaria
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            @await Html.PartialAsync("/Areas/Administracion/Views/Tasa/Insertar.cshtml", new Opain.Jarvis.Dominio.Entidades.TasaAeroportuariaOtd { })
+                        </div>
+                    </div>
+                </div>
+                <!---->
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" onclick="ListarHorarioOperacion();">
+                                Horario de operación para los usuarios en la plataforma
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body">
+                            @await Html.PartialAsync("/Areas/Administracion/Views/HorarioOperacion/Insertar.cshtml", new Opain.Jarvis.Dominio.Entidades.HorarioOperacionOtd { })
+
+                            <div class="col-8 offset-2">
+                                <div class="table-responsive" id="divHorarioOperacion">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!---->
+                <div class="card">
+                    <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Habilitar el acceso a la plataforma para una aerolínea en específica
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                        <div class="card-body">
+                            @await Html.PartialAsync("/Areas/Administracion/Views/HorariosAerolineas/Insertar.cshtml", new Opain.Jarvis.Dominio.Entidades.HorarioAerolineaOtd { })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" id="headingFour">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" onclick="ListarAerolineas();">
+                                Administrar aerolíneas
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <div id="divAerolineas"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-header" id="headingSeven">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                Carga tripulación
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
+                        <div class="card-body">
+
+                            @await Html.PartialAsync("/Areas/Administracion/Views/HorariosAerolineas/Cargar.cshtml", new Opain.Jarvis.Dominio.Entidades.HorarioAerolineaOtd { })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+    <!--Notificacion Procesar Vuelos-->
+
+    @if (User.IsInRole("ADMINISTRADOR"))
+    {
+        <div class="tab-pane fade mb-5" id="pills-NotificacionVuelosProcesados" role="tabpanel" aria-labelledby="pills-NotificacionVuelosProcesados-tab">
+            <vc:notificacion-vuelos-procesados fecha=""></vc:notificacion-vuelos-procesados>
+        </div>
+    }
+
+    <!--Modal eliminar pregunta-->
+    <div class="modal fade advertencia eliminar" tabindex="-1" role="dialog" aria-labelledby="eliminar" aria-hidden="true">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="~/images/advertencia.png" class="img-fluid" alt="Advertencia" />
+                </div>
+                <div class="modal-body">
+                    <div class="container" id="divEliminarUsuario">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--Modal error-->
+    <div class="modal fade advertencia errorProceso" tabindex="-1" role="dialog" aria-labelledby="errorProceso" aria-hidden="true">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="~/images/advertencia.png" class="img-fluid" alt="Advertencia" />
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="col-sm-4 offset-sm-4">
+                            <p>
+                                Ha ocurrido un error,<br />
+                                no se ha podido procesar su solicitud
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3">
+                                <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal crear nuevo usuario-->
+    <div class="modal fade crear" tabindex="-1" role="dialog" aria-labelledby="crear" aria-hidden="true">
+        <div class="modal-dialog modal--big">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn-block" data-dismiss="modal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="container" id="divCrearUsuario">
+
+                    </div>
+                </div>
+                @*<div class="modal-footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+    <!--Modal editar usuario-->
+    <div class="modal fade editar" tabindex="-1" role="dialog" aria-labelledby="editar" aria-hidden="true">
+        <div class="modal-dialog modal--big">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn-block" data-dismiss="modal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="container" id="divEditarUsuario">
+
+                    </div>
+                </div>
+                @*<div class="modal-footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+    <!--Modal guardado correctamente-->
+    <div class="modal fade advertencia guardado" tabindex="-1" role="dialog" aria-labelledby="guardado" aria-hidden="true">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="~/images/advertencia.png" class="img-fluid" alt="Advertencia" />
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="col-sm-4 offset-sm-4" id="mensajeGuardado">
+                            <p>Los datos fueron guardados correctamente</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3">
+                                <button type="button" class="btn btn--default btn-block" onclick="AfterClick();" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal creado correctamente-->
+    <div class="modal fade advertencia creado" tabindex="-1" role="dialog" aria-labelledby="creado" aria-hidden="true">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="~/images/advertencia.png" class="img-fluid" alt="Advertencia" />
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="col-sm-4 offset-sm-4">
+                            <p>
+                                Los datos fueron creados correctamente
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3">
+
+                                <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal editar horas de acceso-->
+    <div class="modal fade editarHora" tabindex="-1" role="dialog" aria-labelledby="editarHora" aria-hidden="true">
+        <div class="modal-dialog modal--big">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn-block" data-dismiss="modal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div id="divHorarioAerolinea"></div>
+                        <div id="divMensajeHorarioAerolinea"></div>
+                    </div>
+                </div>
+                @*<div class="modal-footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-10 offset-sm-1">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+    <!--Modal confirmacion eliminar horas-->
+    <!--Modal editar usuarios para anexos y facturas-->
+    <div class="modal fade editarUsuario" tabindex="-1" role="dialog" aria-labelledby="editarUsuario" aria-hidden="true">
+        <div class="modal-dialog modal--big">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn-block" data-dismiss="modal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <form class="needs-validation" novalidate>
+                    <div class="modal-body">
+                        <div class="container">
+
+                            <div class="row">
+                                <div class="col-sm-10 offset-sm-1">
+                                    <h1>Editar horas de acceso</h1>
+                                    <hr />
+                                    <p>Para editar la información de clic sobre el campo correspondiente</p>
+                                    <hr />
+                                    <table class="example2" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td style="width:33.333333%">
+                                                    Tipo de identificación
+                                                </td>
+                                                <td style="width:33.333333%">
+                                                    Número de identificación
+                                                </td>
+                                                <td style="width:33.333333%">
+                                                    Acción
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:33.333333%">
+                                                    <select id="idType" class="form-control" required>
+                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="CC">Cédula de ciudadanía</option>
+                                                        <option value="CE">Cédula de extrajería</option>
+                                                        <option value="NIT">NIT</option>
+                                                        <option value="ETC">etc</option>
+                                                    </select>
+                                                    <div class="invalid-tooltip">
+                                                        Por favor escriba el tipo de identificación
+                                                    </div>
+                                                </td>
+                                                <td style="width:33.333333%">
+                                                    <input type="number" class="" value="50" required />
+                                                    <div class="invalid-tooltip">
+                                                        Por favor escriba un valor valido
+                                                    </div>
+                                                </td>
+                                                <td style="width:33.333333%">
+                                                    <button type="button" class="btn btn--simple p-1" data-toggle="modal" data-target=".eliminar" data-dismiss="modal">
+                                                        <img src="~/images/borrar.png" alt="Eliminar" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-10 offset-sm-1">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="submit" class="btn btn--default btn-block" data-dismiss="modal">Guardar cambios</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-info btn-lg" style="visibility:hidden" id="BtnAbrirModalElim" data-toggle="modal" data-target="#myModal2"> </button>
+    <!-- Modal -->
+
+    <div class="modal fade detailsEliminaV" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="Elimina-horario-vuelo" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+        <div class="modal-dialog modal--big">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-block" data-dismiss="modal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                Horario eliminado exitosamente
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-10 offset-sm-1">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Aceptar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn--default" style="visibility:hidden" id="BtnAbrirModalEditando" data-toggle="modal" data-target="#myModal233"> </button>
+    <!-- Modal -->
+
+    <div class="modal fade detailsEliminaV modal__bg--black" id="myModal233" tabindex="-1" role="dialog" aria-labelledby="E-horario-vuelo" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3 mt-4">
+                                <p>
+                                    <img src="~/images/advertencia-bien.png" />
+                                </p>
+                                <p>
+                                    El horario fue actualizado exitosamente
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3 mt-4">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Aceptar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

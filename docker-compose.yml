@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  opain.jarvis.servicios.webapi:
+    image: ${DOCKER_REGISTRY-}opainjarvisservicioswebapi
+    build:
+      context: .
+      dockerfile: Opain.Jarvis.Servicios.WebApi/Dockerfile
+
+  opain.jarvis.presentacion.web:
+    image: ${DOCKER_REGISTRY-}opainjarvispresentacionweb
+    build:
+      context: .
+      dockerfile: Opain.Jarvis.Presentacion.Web/Dockerfile
+

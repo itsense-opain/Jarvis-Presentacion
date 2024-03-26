@@ -1,0 +1,206 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.TicketOtd
+
+<div class="col-sm-10 offset-sm-1">
+    @if (User.IsInRole("SUPERVISOR") || User.IsInRole("SUPERVISOR CARGA") || User.IsInRole("CARGA") || User.IsInRole("AEROLINEA") || User.IsInRole("ADMINISTRADOR"))
+    {
+        <form asp-action="EstadoTicket" method="post">
+            <input type="hidden" name="idTicket" value="@Model.Id" />
+            <div class="row">
+                <h1 class="col-6">Seguimiento</h1>
+                <div class="col-6 text-right">
+                    Editar estado del ticket:
+                    <label class="switch switch--ticket">
+
+                        @if (Model.Estado == 1)
+                        {
+                            <input type="checkbox" checked id="estadoTicket" name="estadoTicket" onChange="this.form.submit();" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="estadoTicket" name="estadoTicket" onChange="this.form.submit();" />
+                        }
+                        <span class="slider round">
+                            <span>Ticket abierto</span>
+                        </span>
+                        <span class="absolute-no">Ticket cerrado</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+    }
+    else
+    {
+        <div class="row">
+            <h1 class="pr-4">
+                Seguimiento
+            </h1>
+            @if (Model.Estado == 1)
+            {
+                <div class="text-left ticket--abierto">
+                    Ticket abierto
+                </div>
+            }
+            else
+            {
+                <div class="text-left ticket--cerrado">
+                    Ticket cerrado
+                </div>
+            }
+        </div>
+    }
+
+    <hr />
+    <div class="d-flex text-center">
+        <div class="flex-fill">
+            Número de ticket: <strong>@Model.NumeroTicket</strong>
+        </div>
+        <div class="vertical-line--left"></div>
+        <div class="flex-fill">
+            Aerolínea: <strong>@Model.NombreAerolinea</strong>
+        </div>
+        <div class="vertical-line--left"></div>
+        <div class="flex-fill">
+            @if (Model.TipoConsulta == 1 || Model.TipoConsulta == 2)
+            {
+                <text>Número de vuelo:</text> <strong>@Model.Asunto</strong>
+            }
+            else if (Model.TipoConsulta == 3 || Model.TipoConsulta == 4)
+            {
+                <text>Número de factura:</text> <strong>@Model.Asunto</strong>
+            }
+            else
+            {
+                <text>Asunto:</text> <strong>@Model.Asunto</strong>
+            }
+        </div>
+    </div>
+    <!---->
+    <hr />
+    <div class="message__first mb-3">
+
+        <div class="message__header">
+            Mensaje inicial:
+        </div>
+        <div class="message__body">
+            @Model.Mensaje
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Adjunto))
+        {
+            var adjuntos = Model.Adjunto.Split(' ');
+
+            foreach (var adjunto in adjuntos)
+            {
+                var extension = System.IO.Path.GetExtension(adjunto);
+                extension = extension.TrimStart('.');
+
+                string iconoUrl;
+
+                // Obtener la URL del ícono según la extensión
+                switch (extension.ToLower())
+                {
+                    case "txt":
+                        iconoUrl = "/images/txt-icon.png";
+                        break;
+                    case "pdf":
+                        iconoUrl = "/images/pdf.png";
+                        break;
+                    case "doc":
+                    case "docx":
+                        iconoUrl = "/images/doc-icon.png";
+                        break;
+                    case "xls":
+                    case "xlsx":
+                        iconoUrl = "/images/xls.png";
+                        break;
+                    case "zip":
+                    case "rar":
+                        iconoUrl = "/images/zip-icon.png";
+                        break;
+                    case "jpg":
+                    case "jpeg":
+                        iconoUrl = "/images/jpg-icon.png";
+                        break;
+                    case "png":
+                        iconoUrl = "/images/png-icon.png";
+                        break;
+                    default:
+                        iconoUrl = "/images/adjuntar.png";
+                        break;
+                }
+
+
+
+
+                <div class="message__footer">
+                    <hr />
+                    <a href="/Contactenos/Tickets/DescargarArchivo?carpeta=TICKETS&nombreArchivo=@adjunto" target="_top" class="btn btn--border">
+                        <img src="@iconoUrl" id="ImagenId" class="img-fluid mr-2 ml-2"> @adjunto   
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="message__footer">
+                <hr />
+                <p>No hay adjuntos disponibles.</p>
+            </div>
+        }
+
+
+
+
+    </div>
+    <hr class="mb-5" />
+
+    <!--Acordion respuesta--->
+    @if (Model.Estado == 1)
+    {
+        <div class="collapse" id="InsertarMensaje">
+            @await Html.PartialAsync("/Areas/Contactenos/Views/Tickets/InsertarMensaje.cshtml", new Opain.Jarvis.Dominio.Entidades.RespuestaTicketOtd { IdTicket = Model.Id })
+        </div>
+        <!----->
+        <div class="row">
+            <div class="col-6 pt-2">
+                <strong>Mensajes enviados y recibidos</strong>
+            </div>
+            <div class="col-6 text-right">
+                <button type="button" class="btn btn--border responder" data-toggle="collapse" data-target="#InsertarMensaje" aria-expanded="false" aria-controls="InsertarMensaje">
+                    <img src="~/images/responder.png" alt="Responder mensaje" class="img-fluid mr-2 ml-2"> Responder
+                </button>
+            </div>
+        </div>
+    }
+
+
+    @foreach (var item in Model.Respuestas)
+    {
+        <div class="message">
+            <div class="message__header">
+                Mensaje de: <strong>@item.NombreUsuario</strong>
+                <strong class="message__date">
+                    @String.Concat(item.FechaCreacion.Day.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Month.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Year.ToString(), " ", item.FechaCreacion.Hour.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Minute.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Second.ToString().PadLeft(2, '0'))
+
+                </strong>
+            </div>
+            <div class="message__body">
+                @item.Mensaje
+            </div>
+            @if (!string.IsNullOrEmpty(item.Adjunto))
+            {
+                <div class="message__footer">
+                    <hr />
+                    <a href="/Contactenos/Tickets/DescargarArchivo?carpeta=TICKETS&nombreArchivo=@item.Adjunto" target="_blank" class="btn btn--border">
+                        <img src="~/images/descargar.png" alt="Descargar adjunto" class="img-fluid mr-2 ml-2"> Descargar adjunto
+                    </a>
+                </div>
+            }
+
+        </div>
+    }
+</div>
+
+
+

@@ -1,0 +1,267 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.UsuarioOtd
+@{
+    //bool BloquearCampo = false;
+    if (Model.NumeroDocumento == User.Identity.Name)
+    {
+       // BloquearCampo = true;
+    }
+
+}
+<h1>Editar usuario</h1>
+<div class="row">
+    <div class="col-sm-12">
+        <p>Para editar la información de clic sobre el campo correspondiente</p>
+    </div>
+</div>
+<hr />
+<form id="formUpdate" asp-action="Actualizar">
+    <div class="row">
+        <div class="text-right col-sm-6 offset-sm-6">
+            Estado del usuario
+            <label class="switch">
+                @if (Model.Activo)
+                {
+                    <input type="checkbox" checked id="estado" name="estado">
+                }
+                else
+                {
+                    <input type="checkbox" id="estado" name="estado">
+                }
+                <span class="slider round">
+                    <span>Activo</span>
+                </span>
+                <span class="absolute-no">Inactivo</span>
+            </label>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="form-group col-sm-6">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Activo" />
+            <label asp-for="Nombre">Nombre</label>
+            <input type="text" class="form-control" asp-for="Nombre" placeholder="Nombre" />
+            <span asp-validation-for="Nombre" class="tool__valide"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Apellido">Apellido</label>
+            <input type="text" class="form-control" asp-for="Apellido" placeholder="Apellido" />
+            <span asp-validation-for="Apellido" class="tool__valide"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="TipoDocumento">Tipo de identificación</label>
+            <select asp-for="TipoDocumento" disabled="disabled" class="form-control">
+                <option value="">Seleccione una opción</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="CE">Cédula de extranjería</option>
+                <option value="NIT">NIT</option>
+                <option value="Pasaporte">Pasaporte</option>
+            </select>
+            <input type="hidden" asp-for="TipoDocumento" />
+            <span asp-validation-for="TipoDocumento" class="tool__valide"></span>
+        </div>
+        @*Inicio elop0ez 09-01-2020 - bug 870 - ajuste tipo de campo editar ususario*@
+        <div class="form-group col-sm-6">
+            <label asp-for="NumeroDocumento">Número de identificación</label>
+            <input type="text" class="form-control" asp-for="NumeroDocumento" placeholder="Número de identificación" disabled="disabled" />
+            <input type="hidden" asp-for="NumeroDocumento"/>
+            <span asp-validation-for="NumeroDocumento" class="tool__valide"></span>
+        </div>
+        @*fin elop0ez 09-01-2020 - bug 870 - ajuste tipo de campo editar ususario*@
+        <div class="form-group col-sm-6">
+            <label asp-for="Email">Correo electrónico</label>
+            <input type="email" id="email" class="form-control" asp-for="Email" placeholder="Correo electrónico" />
+            <span asp-validation-for="Email" class="tool__valide"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Telefono">Teléfono</label>
+            <input type="tel" class="form-control" asp-for="Telefono" placeholder="Teléfono" />
+            <span asp-validation-for="Telefono" class="tool__valide"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Cargo">Cargo</label>
+            <input type="text" class="form-control" asp-for="Cargo" placeholder="Cargo" />
+            <span asp-validation-for="Cargo" class="tool__valide"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Perfil">Perfil</label>
+            <select asp-for="Perfil" asp-items="@((List<SelectListItem>)ViewData["Perfiles"])" class="form-control"></select>
+            <span asp-validation-for="Perfil" class="tool__valide"></span>
+        </div>
+        <div class="form-group col-sm-6" id="divAerolinea">
+            <label asp-for="Aerolinea">Aerolínea</label>
+            <select asp-for="Aerolinea" id="Aerolinea" asp-items="@((List<SelectListItem>)ViewData["Aerolineas"])" class="form-control"></select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+        </div>
+        <div class="col-sm-6">
+            <button type="button" id="btnActualizar" class="btn btn--default btn-block">Guardar usuario</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function() {
+    // Handler for .ready() called.
+        perfilAerolinea();
+
+        $("#estado").click(function () {
+            
+            if ($("#estado").is(':checked')) {
+                $("#Activo").val(true)
+            } else {
+                $("#Activo").val(false)
+            }
+        });
+
+
+        var emailAnt = $("#email").val();
+
+        $("#btnActualizar").on("click", function () {
+            
+            var email = $("#email").val();
+
+            if (emailAnt != email) {
+
+                $.ajax({
+                    type: 'GET',
+                    url: "/Consulta/Consulta/emailExiste?email=" + email,
+                    success: function (data) {
+                        if (data) {
+                            $("#email-error").text("El correo ingresado ya existe favor ingrese otro");
+                            $("#email-error").show();
+                        } else {
+                            $("#email-error").hide();
+                            $("#formUpdate").submit();
+                        }
+                    },
+                    error: function (data) {
+                        console.log('Ha surgido un error al guardar los datos.');
+                    }
+                })
+
+            } else {
+                $("#formUpdate").submit();
+            }
+        });
+
+        $("#Perfil").change(function () {
+            perfilAerolinea();
+        });
+
+
+        function perfilAerolinea() {
+
+           var perfil = $("#Perfil").val();
+
+           if (perfil === "OPAIN" || perfil === "ADMINISTRADOR" || perfil === "EXTERNO" || perfil === "TECNOLOGIA") {
+                $("#divAerolinea").hide();
+                $("#Aerolinea").val("");
+           }
+            else
+           {
+
+               var aerolinea = '@ViewBag.Aerolinea';
+
+               $("#Aerolinea option").each(function () {
+
+                   if ($(this).val().trim() == aerolinea) {
+                       console.log('into opc selected...');
+                       $(this).attr('selected', 'selected');
+                       $(this).change();
+                   }
+
+               });
+
+                //$("#Aerolinea option[value='AVIANCA']").attr("selected", "selected");
+                $("#divAerolinea").show();
+
+           }
+        }
+
+        $.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            },
+            "Please check your input."
+        );
+
+        $("#formUpdate").validate({
+	    rules: {
+		    Nombre: {
+			    required: true
+		    },
+		    Apellido: {
+			    required: true
+		    },
+		    TipoDocumento: {
+			    required: true
+                },
+            NumeroDocumento: {
+                required: true,
+                regex: "^[a-zA-Z0-9'.\\s]{1,40}$"
+                },
+            Email: {
+			    required: true
+                },
+             Telefono: {
+                 required: true
+                },
+              Cargo: {
+			    required: true
+		    }
+	    },
+	    messages: {
+		    Nombre: {
+			    required: "El campo Nombre es obligatorio."
+            },
+            Apellido: {
+			    required: "El campo Apellido es obligatorio."
+            },
+            TipoDocumento: {
+			    required: "El campo Tipo de identificación es obligatorio."
+            },
+            NumeroDocumento: {
+                required: "El campo Número de identificación es obligatorio.",
+                regex: "No puede contener caracteres especiales"
+            },
+            Email: {
+			    required: "El campo Correo electrónico es obligatorio."
+            },
+            Telefono: {
+			    required: "El campo Teléfono es obligatorio."
+            },
+            Cargo: {
+			    required: "El campo Cargo es obligatorio."
+		    }
+	    },
+	    highlight: function(element, errorClass) {
+		    $(element).closest(".form-group").addClass("has-error");
+	    },
+	    unhighlight: function(element, errorClass) {
+		    $(element).closest(".form-group").removeClass("has-error");
+	    },
+	    errorPlacement: function (error, element) {
+		    error.appendTo(element.parent().next());
+	    },
+	    errorPlacement: function (error, element) {
+		    if(element.attr("type") == "checkbox") {
+			    element.closest(".form-group").children(0).prepend(error);
+		    }
+		    else
+			    error.insertAfter(element);
+	    }
+    });
+
+});
+
+</script>
+
+
+

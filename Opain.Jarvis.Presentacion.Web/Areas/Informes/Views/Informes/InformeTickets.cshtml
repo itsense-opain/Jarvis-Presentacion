@@ -1,0 +1,199 @@
+﻿@model List<Opain.Jarvis.Dominio.Entidades.InformeTickets>
+
+@inject Opain.Jarvis.Presentacion.Web.Helpers.ServicioComboBox ServicioComboBox
+
+@using Opain.Jarvis.Dominio.Entidades;
+
+@{
+    ViewData["Title"] = "Informe de tickets";
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Aerolineas = ServicioComboBox.TraerAerolineas2();
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Tipos = ServicioComboBox.TraerTipos();
+}
+
+<h1>Informe de tickets</h1>
+
+<partial name="Menu" />
+<div class="sin__contenido mb-5">
+    <form asp-action="InformeTickets" method="post" id="Accion">
+        @Html.AntiForgeryToken()
+        <div class="bg--white">
+            @if (User.IsInRole("OPAIN") || User.IsInRole("ADMINISTRADOR"))
+            {
+                <div class="row">
+                    <div class="col-sm-3 pt-2">
+                        Aerolínea:
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-inline float-right">
+                            <div class="form-group">
+                                <select class="form-control" name="aerolinea">
+                                    <option value="0">Todas las aerolíneas</option>
+                                    @foreach (Opain.Jarvis.Presentacion.Web.Helpers.TextoValor Tipo in Aerolineas)
+                                    {
+                                        bool Seleccionado = Tipo.Valor.Equals(ViewBag.aerolinea);
+                                        <option value="@Tipo.Valor" selected="@Seleccionado">@Html.Raw(Tipo.Texto)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                
+                
+             
+
+                <hr />
+            }
+            <div class="row" id="divFiltro">
+                <div class="col-sm-3 pt-2">
+                    Seleccione las fechas:
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group  search__date--width">
+                            <img src="~/images/novedad-calendario.png" alt="" />
+                            <input id="startDate" readonly name="startDate" class="text-center" placeholder="Fecha inicial" value="@ViewBag.startDate" /> - <input id="endDate" readonly name="endDate" class="text-center" placeholder="Fecha final" value="@ViewBag.endDate" />
+                            <div class="invalid-tooltip">
+                                Por favor escriba o seleccione una fecha valida
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-inline float-right">
+                        <button type="button" class="btn btn--border ml-2" id="btnBuscar">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="bg--white mb-5">
+            @ViewBag.Error
+        </div>
+    }
+
+    @if (Model.Count >= 1)
+    {
+<div class="bg--white mb-5">
+    A continuación se muestra el resultado de su búsqueda
+    <hr />
+    <form asp-action="ExportarExcel" method="post" id="Excel">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-inline float-left">
+                    <button type="button" class="btn btn--border ml-2" id="btnExcel">Exportar Excel</button>
+                    <input id="DatosConsulta" name="DatosConsulta" class="text-center" value="@ViewBag.ConsultaExcel" type="hidden" />
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table class="table" id="tblConsultasTickets">
+            <thead>
+                <tr>
+                    <th>Número Ticket</th>
+                    <th>Tipo Ticket</th>
+                    <th>Estado Inicial</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Hora Solicitud</th>
+                    <th>Número Vuelo</th>
+                    <th>Asunto</th>
+                    <th>Aerolínea</th>
+                    <th>Usuario Aerolínea</th>
+                    <th>Documento Adjunto</th>
+                    <th>Fecha Respuesta</th>
+                    <th>Hora Respuesta </th>
+                    <th>Respuesta</th>
+                    <th>Usuario Opain</th>
+                    <th>Adjunto Respuesta</th>
+                    <th>Estado Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                        @foreach (Opain.Jarvis.Dominio.Entidades.InformeTickets registro in Model)
+                {
+                    <tr>
+                        <td>@registro.NumeroTicket</td>
+                        <td>@registro.TipoTicket</td>
+                        <td>Abierto</td>
+                        <td>@registro.FechaSolicitud.Day.ToString().PadLeft(2, '0')/@registro.FechaSolicitud.Month.ToString().PadLeft(2, '0')/@registro.FechaSolicitud.Year.ToString() </td>
+                        <td>@registro.FechaSolicitud.Hour.ToString().PadLeft(2, '0'):@registro.FechaSolicitud.Minute.ToString().PadLeft(2, '0'):@registro.FechaSolicitud.Second.ToString() </td>
+                        <td>@registro.Depende</td>
+                        <td>@registro.Asunto</td>
+                        <td>@registro.Aerolinea</td>
+                        <td>@registro.Usuario</td>
+                        <td>@registro.Adjunto</td>
+                        @if (registro.FechaRespuesta.Year == 1)
+                        {
+                            <td></td>
+                            <td> </td>
+                        }
+                        else
+                        {
+                            <td>@registro.FechaRespuesta.Day.ToString().PadLeft(2, '0')/@registro.FechaRespuesta.Month.ToString().PadLeft(2, '0')/@registro.FechaRespuesta.Year.ToString() </td>
+                            <td>@registro.FechaRespuesta.Hour.ToString().PadLeft(2, '0'):@registro.FechaRespuesta.Minute.ToString().PadLeft(2, '0'):@registro.FechaRespuesta.Second.ToString() </td>
+                        }
+
+                        <td>@registro.Respuesta</td>
+                        <td>@registro.UsuarioRespuesta</td>
+                        @if (registro.FechaRespuesta.Year == 1)
+                        {
+                            <td></td>
+                        }
+                        else
+                        {
+                            <td>@registro.AdjuntoRespuesta</td>
+                        }
+
+                        <td>@registro.EstadoFinal</td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $("#btnBuscar").click(function (event)
+        {
+            event.preventDefault();
+
+            var fechaInicial = $("#startDate").val();
+            var fechaFinal = $("#endDate").val();
+            if (fechaInicial == "" || fechaFinal == "") {
+                alert('Debe seleccionar un rango de fechas');
+            }
+            else {
+                $("#Accion").submit()
+                return true;
+            }
+
+        });
+        $("#btnExcel").click(function (event) {
+            event.preventDefault();
+
+            $("#Excel").submit()
+            return true;
+
+        });
+    </script>
+    <script>
+        $("#tblConsultasTickets").DataTable({
+            
+        });
+    </script>
+
+}

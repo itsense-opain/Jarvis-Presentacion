@@ -1,0 +1,156 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.InformeDescarga
+@inject Opain.Jarvis.Presentacion.Web.Helpers.ServicioComboBox ServicioComboBox
+@{
+    ViewData["Title"] = "Descarga de archivos";
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Aerolineas = ServicioComboBox.TraerAerolineas2();
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Tipos = ServicioComboBox.TraerTipos();
+}
+
+<h1>Descarga de archivos</h1>
+
+<partial name="Menu" />
+
+<div class="sin__contenido mb-5">
+    <form asp-action="DescargaArchivosAerolinea" method="post" id="Accion">
+        @Html.AntiForgeryToken()
+        <div class="bg--white">
+            <div class="row">
+                <div class="col-sm-3 pt-2">
+                    Aerolinea:
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group">
+                            <select class="form-control" id="aerolinea" name="aerolinea">
+                                <option value="0">Todas las aerolíneas</option>
+                                @foreach (Opain.Jarvis.Presentacion.Web.Helpers.TextoValor Tipo in Aerolineas)
+                                {
+                                    bool Seleccionado = Tipo.Valor.Equals(ViewBag.aerolinea);
+                                    <option value="@Tipo.Valor" selected="@Seleccionado">@Html.Raw(Tipo.Texto)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row" id="divFiltro">
+                <div class="col-sm-3 pt-2">
+                    Seleccione las fechas:
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group  search__date--width">
+                            <img src="~/images/novedad-calendario.png" alt="" />
+                            <input id="startDate" name="startDate" readonly class="text-center" placeholder="Fecha inicial" aria-describedby="validationTooltipUsernamePrepend" required autocomplete="off" value="@Model.FechaInicial" /> - <input id="endDate" readonly name="endDate" class="text-center" placeholder="Fecha final" aria-describedby="validationTooltipUsernamePrepend" required autocomplete="off" value="@Model.FechaFinal" />
+                            <div class="invalid-tooltip">
+                                Por favor seleccione una fecha valida
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-inline float-right">
+                        <button type="button" class="btn btn--border ml-2" id="btnBuscar">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="bg--white mb-5">
+            @ViewBag.Error
+        </div>
+    }
+<button type="button" style="visibility:hidden"  data-toggle="modal" id="btnalertas" data-target=".advertencia">Validación</button>
+
+    <!--Modal advertencia-->
+    <div class="modal fade advertencia" id="modalMensaje" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="~/images/advertencia.png" class="img-fluid" alt="Advertencia" />
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="col-sm-6 offset-sm-3">
+                            <p>
+                               Falta configurar las fechas
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-8 offset-sm-2">
+                                <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Aceptar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+{
+    <script>
+
+        //$(document).ready(function () {
+        ////    //código a ejecutar cuando el DOM está listo para recibir instrucciones.
+        ////    var _aerolinea = $("#aerolinea").val();
+        ////    if (_aerolinea.toString() === "0") { $("#endDate").hide() }
+        ////    else { $("#endDate").show(); }
+
+        //    $("#aerolinea").on('change', function () {
+        //        var selectVal = $("#selectId option:selected").val();
+        //        if (selectVal.toString() === "0") { $("#endDate").hide() }
+        //        else { $("#endDate").show(); }
+        //    });
+
+        //});
+
+        
+        //document.getElementById("aerolinea").addEventListener('change', CambioSeleccion);
+
+        //function CambioSeleccion() {
+        //    var _aerolinea = $("#aerolinea").val();
+        //    if (_aerolinea.toString() === "0") { $("#endDate").hide() }
+        //    else { $("#endDate").show(); }
+        //}
+        $("#btnBuscar").click(function (event) {
+            event.preventDefault();
+
+            var fechaInicial = $("#startDate").val();
+            var fechaFinal = $("#endDate").val();
+            var _aerolinea = $("#aerolinea").val();
+
+            if (fechaInicial === "") {
+                $("#btnalertas").click();
+                return false;
+            }
+            if (fechaFinal === "") {
+                $("#btnalertas").click();
+                return false;
+            }
+
+            $("#Accion").submit()
+            return true;
+
+        });
+
+
+
+
+    </script>
+}

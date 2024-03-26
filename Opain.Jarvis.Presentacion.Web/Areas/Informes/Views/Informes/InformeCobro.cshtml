@@ -1,0 +1,257 @@
+﻿@model List<Opain.Jarvis.Dominio.Entidades.InformeCobro>
+
+@inject Opain.Jarvis.Presentacion.Web.Helpers.ServicioComboBox ServicioComboBox
+
+@using Opain.Jarvis.Dominio.Entidades;
+
+@{
+    ViewData["Title"] = "Informe de cobro";
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Aerolineas = ServicioComboBox.TraerAerolineas2();
+    List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Tipos = ServicioComboBox.TraerTipos();
+}
+
+<h1>Informe de cobro</h1>
+
+<partial name="Menu" />
+
+<div class="sin__contenido mb-5">
+    <form asp-action="InformeCobro" method="post" id="Accion">
+        @Html.AntiForgeryToken()
+        <div class="bg--white">
+            @if (User.IsInRole("OPAIN") || User.IsInRole("ADMINISTRADOR"))
+            {
+            <div class="row">
+                <div class="col-sm-3 pt-2">
+                    Aerolinea:
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group">
+                            <select class="form-control" name="aerolinea">
+                                <option value="0">Todas las aerolíneas</option>
+                                @foreach (Opain.Jarvis.Presentacion.Web.Helpers.TextoValor Tipo in Aerolineas)
+                                    {
+                                        bool Seleccionado = Tipo.Valor.Equals(ViewBag.aerolinea);
+                                <option value="@Tipo.Valor" selected="@Seleccionado">@Html.Raw(Tipo.Texto)</option>
+                                    }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+            }
+            <div class="row">
+                <div class="col-sm-3 pt-2">
+                    Número de vuelo:
+                </div>
+
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group">
+                            <input id="facturaHasta" name="facturaHasta" class="text-center" placeholder="Número de vuelo" value="@ViewBag.facturaHasta" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row" id="divFiltro">
+                <div class="col-sm-3 pt-2">
+                    Seleccione las fechas:
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-inline float-right">
+                        <div class="form-group  search__date--width">
+                            <img src="~/images/novedad-calendario.png" alt="" />
+                            <input id="startDate" readonly name="startDate" class="text-center" placeholder="Fecha inicial" value="@ViewBag.startDate" /> - <input id="endDate" readonly name="endDate" class="text-center" placeholder="Fecha final" value="@ViewBag.endDate" />
+                            <div class="invalid-tooltip">
+                                Por favor escriba o seleccione una fecha valida
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-inline float-right">
+                        <button type="button" class="btn btn--border ml-2" id="btnBuscar">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+    <div class="bg--white mb-5">
+        @ViewBag.Error
+    </div>
+    }
+
+    @if (Model.Count > 1)
+    {
+<div class="bg--white mb-5">
+    A continuación se muestra el resultado de su búsqueda
+    <hr />
+    <form asp-action="ExportarExcel" method="post" id="Excel">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-inline float-left">
+                    <button type="button" class="btn btn--border ml-2" id="btnExcel">Exportar Excel</button>
+                    <input id="DatosConsulta" name="DatosConsulta" class="text-center" value="@ViewBag.ConsultaExcel" type="hidden" />
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table class="table" id="tblConsultasGPUA">
+            <thead>
+                <tr>
+                    <th>Fecha Salida</th>
+                    <th>Matrícula</th>
+                    <th>Tipo Vuelo</th>
+                    <th>Oaci</th>
+                    <th>Número Vuelo</th>
+                    <th width="200">Tasas reportadas por la aerolìnea</th>
+                    <th width="150">Tasas cobradas por Opain</th>
+                    <th>Pasajeros</th>
+                    <th>Infantes</th>
+                    <th width="150">Trànsitos en Lìnea</th>
+                    <th width="150">Trànsitos en Conexiòn</th>
+                    <th>Exentos</th>
+                    <th>Tripulantes</th>
+                    <th width="200">Total Diferencia en Tasas</th>
+                    <th>Concepto de cobro</th>
+                    <th>Usuario Aerolìnea</th>
+                    <th width="150">Fecha de Cargue del vuelo</th">
+                    <th width="150">Hora de Cargue del vuelo</th>
+                </tr>
+            </thead>
+            <tbody>
+                        @foreach (Opain.Jarvis.Dominio.Entidades.InformeCobro registro in Model)
+                {
+                    if (@registro.Matricula.ToString().Trim() != "TOTALES")
+                    {
+                        <tr>
+                            <td>@registro.FechaSalida.Day.ToString().PadLeft(2, '0')/@registro.FechaSalida.Month.ToString().PadLeft(2, '0')/@registro.FechaSalida.Year.ToString() </td>
+                            <td>@registro.Matricula</td>
+                            <td>@registro.TipoVuelo</td>
+                            <td>@registro.Oaci</td>
+                            <td>@registro.NumeroVuelo</td>
+                            <td>@registro.TasasReportadas</td>
+                            <td>@registro.TasasCobradas</td>
+                            <td>@registro.Pasajeros</td>
+                            <td>@registro.Infantes</td>
+                            <td>@registro.Linea</td>
+                            <td>@registro.TransitoConexion</td>
+                            <td>@registro.exentos</td>
+                            <td>@registro.tripulantes</td>
+                            <td>@registro.DiferenciaTasas</td>
+                            <td class="special__column">
+                                <ul>
+                                    @foreach (var item in registro.lstNovedades)
+                                    {
+                                        <li>@item.ToString()</li>
+                                    }
+
+                                </ul>
+                            </td>
+
+                            <td>@registro.Usuario</td>
+                            @if (registro.fechaCargue != DateTime.MinValue)
+                            {
+                                <td>@registro.fechaCargue.Day.ToString().PadLeft(2, '0')/@registro.fechaCargue.Month.ToString().PadLeft(2, '0')/@registro.fechaCargue.Year.ToString() </td>
+                                <td>@registro.fechaCargue.Hour.ToString().PadLeft(2, '0'):@registro.fechaCargue.Minute.ToString().PadLeft(2, '0'):@registro.fechaCargue.Second.ToString().PadLeft(2, '0') </td>
+                            }
+                            else
+                            {
+                                <td> </td>
+                                <td> </td>
+                            }
+
+                        </tr>
+                    }
+
+
+                }
+            </tbody>
+            <tfoot>
+                <tr style="background-color: #5E5E5E">
+                    <td></td>
+                    <td style="font-weight:bold; color:white">TOTALES</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().TasasReportadas</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().TasasCobradas</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().Pasajeros</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().Infantes</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().Linea</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().TransitoConexion</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().exentos</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().tripulantes</td>
+                    <td style="font-weight:bold; color:white">@Model.ToList().Where(p => p.Matricula.ToString().Trim() == "TOTALES").FirstOrDefault().DiferenciaTasas</td>
+                    <td>  </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $("#btnBuscar").click(function (event) {
+            event.preventDefault();
+
+            var fechaInicial = $("#startDate").val();
+            var fechaFinal = $("#endDate").val();
+
+            var facturaInicial = $("#facturaDesde").val();
+            var facturaFinal = $("#facturaHasta").val();
+
+
+            if (fechaInicial == "") {
+                alert("Fecha inicial se encuentra vacia.");
+                return false;
+            }
+
+            if (fechaFinal == "") {
+                alert("Fecha hasta se encuentra vacia.");
+                return false;
+            }
+
+            $("#Accion").submit()
+            return true;
+
+        });
+
+        $("#btnExcel").click(function (event) {
+            event.preventDefault();
+
+            $("#Excel").submit()
+            return true;
+
+        });
+    </script>
+    <script>
+        $("#tblConsultasGPUA").DataTable({
+            //dom: 'Bfrtip',
+            //buttons: [
+            //    {
+            //        extend: 'excelHtml5', footer: true,
+            //        exportOptions: {
+            //            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+            //        }
+            //    },
+            //]
+        });
+    </script>
+}

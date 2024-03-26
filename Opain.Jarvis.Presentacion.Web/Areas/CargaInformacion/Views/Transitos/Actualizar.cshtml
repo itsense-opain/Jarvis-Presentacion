@@ -1,0 +1,213 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.PasajeroTransitoOtd
+
+    <h1>
+        ACTUALIZAR TR&aacute;NSITO
+ 
+    </h1>
+
+    <div class="row">
+        <fieldset>
+            <legend>Seleccione el reporte a generar: </legend>
+            <p id="output"></p>
+            <div>
+                <img src="~/images/pdf.png" alt="Descargar PDF" />
+                <input type="radio" id="pdf" name="pdfyTxt" value="pdf" checked>
+                <label for="pdf">PDF</label>
+
+                <img src="~/images/txt.png" alt="Descargar TXT" />
+                <input type="radio" id="txt" name="pdfyTxt" value="txt">
+                <label for="txt">TXT</label>
+            </div>
+        </fieldset>
+        <br /><br />
+        <br /><br />
+        <br /><br />
+        <br /><br />
+
+        @if (ViewData["retornopdfotxt"] != null && ViewData["retornopdfotxt"].ToString() != string.Empty)
+        {
+            string TypeFile = ViewData["retornopdfotxt"].ToString();
+            string RutaArchivo = ViewData["filepath"].ToString();
+
+            string Extencion = System.IO.Path.GetExtension(TypeFile);
+            string URLGet = string.Empty;
+            URLGet = "/Download/TrasitoManual?filepath=" + RutaArchivo.Replace("\\", "xx") + "xx" + TypeFile;
+
+            <script type="text/javascript">
+
+    function UnMomento() {
+        window.location.href = '@URLGet';
+    }
+    setTimeout(UnMomento, 5000);
+            </script>
+        }
+
+        <div class="col-12">
+            <div class="row">
+                <input type="hidden" asp-for="Operacion" />
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="TTC" />
+                <input type="hidden" asp-for="TTL" />
+                <input type="hidden" asp-for="FechaHoraCargue" />
+
+                <div class="form-group col-6">
+                    <label asp-for="FechaLlegada" class="control-label"></label>
+                    <input asp-for="FechaLlegada" class="form-control trnFechaLlegada" />
+                    <span asp-validation-for="FechaLlegada" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-6">
+                    <label asp-for="HoraLlegada" class="control-label"></label>
+                    <input asp-for="HoraLlegada" readonly type="text" class="form-control trnHoraLlegada" />
+                    <span asp-validation-for="HoraLlegada" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label asp-for="NumeroVueloLlegada" class="control-label"></label>
+                    <input asp-for="NumeroVueloLlegada" class="form-control" />
+                    <span asp-validation-for="NumeroVueloLlegada" class="text-danger"></span>
+                </div>
+                <div class="form-group col-6">
+                    <label asp-for="Origen" class="control-label"></label>
+                    <input asp-for="Origen" class="form-control" />
+                    <span asp-validation-for="Origen" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label asp-for="FechaSalida" class="control-label"></label>
+                    <input asp-for="FechaSalida" class="form-control" />
+                    <span asp-validation-for="FechaSalida" class="text-danger"></span>
+                </div>
+                <div class="form-group col-6">
+                    <label asp-for="HoraSalida" control-label"></label>
+                    <input asp-for="HoraSalida" readonly type="text" class="form-control trnHoraSalida" />
+                    <span asp-validation-for="HoraSalida" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label asp-for="NumeroVueloSalida" class="control-label"></label>
+                    <input asp-for="NumeroVueloSalida" class="form-control" />
+                    <span asp-validation-for="NumeroVueloSalida" class="text-danger"></span>
+                </div>
+                <div class="form-group col-6">
+                    <label for="DestinoTransito" class="control-label">Destino</label>
+                    <input name="DestinoTransito" id="DestinoTransito" class="form-control" value="@Model.Destino" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-6">
+                    <label asp-for="NombrePasajero" class="control-label"></label>
+                    <input asp-for="NombrePasajero" class="form-control" />
+                    <span asp-validation-for="NombrePasajero" class="text-danger"></span>
+                </div>
+                <div class="form-group col-6">
+                    <label for="Categoria" class="control-label">Categoría</label>
+                    <select id="Categoria" @*onchange="CambioTipo();"*@ name="Categoria" class="form-control">
+                        @if (Model.TTC == 1)
+                        {
+                            <option value="TTL">Tr&aacute;nsito en Línea</option>
+                            <option value="TTC" selected>Tr&aacute;nsito en Conexión</option>
+                        }
+                        else
+                        {
+                            <option value="TTL" selected>Tr&aacute;nsito en Línea</option>
+                            <option value="TTC">Tr&aacute;nsito en Conexión</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+
+            @*<div class="row" id="divaerolinea" style="display:none">
+                <div class="form-group col-6">
+                    <label for="AerolineaLlegada" class="control-label">Aerolínea de llegada</label>
+                    <select id="AerolineaLlegada" name="AerolineaLlegada" class="form-control">
+                        @foreach (var item in (List<SelectListItem>)ViewData["Aerolineas"])
+                        {
+                            if (Model.AerolineaLlegada == item.Value)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+
+
+                        }
+
+                    </select>
+
+
+                </div>
+            </div>*@
+            <div class="row">
+                <div class="col-sm-6">
+                    <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                </div>
+                <div class="form-group col-6">
+                    <button type="button" onclick="ActualizarTransitoPost(@ViewData["operacion"]);" class="btn btn--default btn-block">Actualizar</button>
+                </div>
+            </div>
+            <div class="alert-danger" id="divMensajeAlert"></div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+        const radioButtons = document.querySelectorAll('input[name="pdfyTxt"]');
+
+        function PdfyTxt(radioButtons) {
+            for (const radioButton of radioButtons) {
+                if (radioButton.checked) {
+                    nombreradioboton = radioButton.value;
+                    break;
+                }
+            }
+
+            output.innerText = nombreradioboton ? `Usted Generará reporte  Con: ${nombreradioboton}` : `Usted no ha selecionado Nada`;
+        }
+
+
+        var category = $("#Categoria").val();
+   
+        if (category == 'TTC') {
+            $("#divaerolinea").css("display", "block");
+        } else {
+             $("#divaerolinea").css("display", "none");
+        }
+        $(".trnHoraLlegada").timepicker({
+            'timeFormat': 'H:i:s'
+        });
+
+        $(".trnHoraLlegada").on("click", function () {
+            $(this).parent().find(".gj-icon").trigger('click');
+        });
+
+        $(".trnHoraSalida").timepicker({
+            'timeFormat': 'H:i:s'
+        });
+
+     
+        
+
+        $(".trnHoraSalida").on("click", function () {
+            $(this).parent().find(".gj-icon").trigger('click');
+        });
+    });
+
+     function CambioTipo() {
+        var category = $("#Categoria").val();
+   
+        if (category == 'TTC') {
+            $("#divaerolinea").css("display", "block");
+        } else {
+             $("#divaerolinea").css("display", "none");
+        }
+    }
+</script>
