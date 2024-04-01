@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
+using Opain.Jarvis.Presentacion.Web.Bussiness;
 
 
 namespace Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers
@@ -25,13 +26,13 @@ namespace Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers
         private readonly IConfiguration configuration;
         private readonly IServicioApi servicioApi;
         private readonly PasajerosController pasajerosController;
-        private readonly IEmailSender emailSender;
+        private readonly IEmail emailSender;
         private readonly ServicioComboBox servicioComboBox;
         private static string tipoCargue;
         private readonly ILogger<VuelosController> _logger;
         private readonly ILogger<PasajerosController> _loggerPasajeros;
 
-        public ArchivosController(IConfiguration cfg, IServicioApi api, IEmailSender email, 
+        public ArchivosController(IConfiguration cfg, IServicioApi api, IEmail email, 
             ServicioComboBox servicioComboBox1, 
             ILogger<VuelosController> logger)
         {

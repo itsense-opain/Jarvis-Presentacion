@@ -13,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Opain.Jarvis.Dominio.Entidades;
+using Opain.Jarvis.EnvioCorreos;
+using Opain.Jarvis.Presentacion.Web.Bussiness;
 using Opain.Jarvis.Presentacion.Web.Helpers;
 using Serilog;
 using System;
@@ -107,6 +109,8 @@ namespace Opain.Jarvis.Presentacion.Web
             services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
             services.AddScoped<IServicioApi, ServicioApi>();
+            services.AddScoped<IEmail, EmailSender>();
+
             services.AddScoped<ServicioOracle>();
 
             services.AddScoped<ServicioComboBox>();

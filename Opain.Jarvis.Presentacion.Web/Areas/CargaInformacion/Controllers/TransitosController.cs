@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using System.Resources;
 using System.Text;
 using iTextSharp.text.pdf;
+using Opain.Jarvis.Presentacion.Web.Bussiness;
 
 namespace Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers
 {
@@ -25,9 +26,9 @@ namespace Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly IServicioApi servicioApi;
-        private readonly IEmailSender emailSender;
+        private readonly IEmail emailSender;
         private readonly ILogger<TransitosController> _logger;
-        public TransitosController(IConfiguration cfg, IServicioApi api, IEmailSender email, ILogger<TransitosController> logger)
+        public TransitosController(IConfiguration cfg, IServicioApi api, IEmail email, ILogger<TransitosController> logger)
         {
             configuration = cfg;
             servicioApi = api;

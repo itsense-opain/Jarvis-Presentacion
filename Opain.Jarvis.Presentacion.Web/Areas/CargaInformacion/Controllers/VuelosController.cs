@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Opain.Jarvis.Dominio.Entidades;
 using Opain.Jarvis.Dominio.Entidades;
+using Opain.Jarvis.Presentacion.Web.Bussiness;
 using Opain.Jarvis.Presentacion.Web.Helpers;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,8 @@ namespace Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers
         private readonly IConfiguration configuration;
         private readonly IServicioApi servicioApi;
         private readonly IHttpContextAccessor HttpContextAccessor;
-        private readonly IEmailSender emailSender;
+        //private readonly IEmailSender emailSender;
+        private readonly IEmail emailSender;        
         private readonly ILogger<VuelosController> _logger;
         private readonly ServicioComboBox servicioComboBox;
 
@@ -84,7 +86,7 @@ namespace Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers
             }
         }
 
-        public VuelosController(IConfiguration cfg, IServicioApi api, IHttpContextAccessor httpContextAccessor, IEmailSender email, ILogger<VuelosController> logger, ServicioComboBox servicioComboBox1)
+        public VuelosController(IConfiguration cfg, IServicioApi api, IHttpContextAccessor httpContextAccessor, IEmail email, ILogger<VuelosController> logger, ServicioComboBox servicioComboBox1)
         {
             configuration = cfg;
             servicioApi = api;

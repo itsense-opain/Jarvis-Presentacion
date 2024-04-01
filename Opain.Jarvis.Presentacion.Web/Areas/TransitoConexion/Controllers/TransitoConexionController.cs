@@ -23,6 +23,7 @@ using ClosedXML.Excel;
 using Opain.Jarvis.Presentacion.Web.Areas.CargaInformacion.Controllers;
 using iTextSharp.text.html.simpleparser;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Opain.Jarvis.Presentacion.Web.Bussiness;
 
 namespace Opain.Jarvis.Presentacion.Web.Areas.TransitoConexion.Controllers
 {
@@ -32,11 +33,11 @@ namespace Opain.Jarvis.Presentacion.Web.Areas.TransitoConexion.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly IServicioApi servicioApi;
-        private readonly IEmailSender emailSender;
+        private readonly IEmail emailSender;
         private readonly ILogger<TransitoConexionController> _logger;
         private static List<PasajeroTransitoOtd> pasajeroTransitoOtd = new List<PasajeroTransitoOtd>();
 
-        public TransitoConexionController(IConfiguration cfg, IServicioApi api, IEmailSender email, ILogger<TransitoConexionController> logger)
+        public TransitoConexionController(IConfiguration cfg, IServicioApi api, IEmail email, ILogger<TransitoConexionController> logger)
         {
             configuration = cfg;
             servicioApi = api;
