@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Opain.Jarvis.Presentacion.Web
 {
@@ -52,7 +53,9 @@ namespace Opain.Jarvis.Presentacion.Web
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddMvc().AddRazorOptions(options => options.AllowRecompilingViewsOnFileChange = true);
+            //services.AddMvc().AddRazorOptions(options => options.AllowRecompilingViewsOnFileChange = true);
+            services.AddControllersWithViews();
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -60,6 +63,8 @@ namespace Opain.Jarvis.Presentacion.Web
 
             var appSettingsSection = Configuration.GetSection("Config");
             services.Configure<AppSettings>(appSettingsSection);
+
+
 
             //services.Configure<CookiePolicyOptions>(options =>
             //{
@@ -128,6 +133,42 @@ namespace Opain.Jarvis.Presentacion.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            app.UseRouting(); // Enable routing
+
+
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "Administracion",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "CargaInformacion",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "TransitoConexion",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "Consulta",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "Contactenos",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "Informes",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
             var appSett = Configuration.GetConnectionString("MostrarErrIU");
 
             string debug = appSett;
@@ -151,42 +192,42 @@ namespace Opain.Jarvis.Presentacion.Web
             app.UseStatusCodePages();
             app.UseStatusCodePagesWithRedirects("/Home/Error");
             //app.UseDeveloperExceptionPage();
-            app.UseDatabaseErrorPage();
+            //app.UseDatabaseErrorPage();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSerilogRequestLogging();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "Administracion",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "Administracion",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
-                    name: "CargaInformacion",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //    routes.MapRoute(
+            //        name: "CargaInformacion",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
-                    name: "TransitoConexion",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //    routes.MapRoute(
+            //        name: "TransitoConexion",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
-                    name: "Consulta",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //    routes.MapRoute(
+            //        name: "Consulta",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
-                    name: "Contactenos",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //    routes.MapRoute(
+            //        name: "Contactenos",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
-                    name: "Informes",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //    routes.MapRoute(
+            //        name: "Informes",
+            //        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
-                   name: "default",
-                   template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            //    routes.MapRoute(
+            //       name: "default",
+            //       template: "{controller=Home}/{action=Index}/{id?}");
+            //});
 
             /*app.Use(async (context, next) =>
             {

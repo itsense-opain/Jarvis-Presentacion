@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Globalization;
-using Microsoft.AspNetCore.Owin;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Text;
 

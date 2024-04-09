@@ -10,36 +10,75 @@ using System.Linq;
 using System.Security.Claims;
 namespace Opain.Jarvis.Presentacion.Web.Controllers
 {
+    //public class HomeController : Controller
+    //{
+    //    private readonly IServicioApi servicioApi;
+    //    private readonly ILogger<HomeController> _logger;
+    //    public IConfiguration Configuration { get; }
+    //    public HomeController(IConfiguration conf, IServicioApi api, ILogger<HomeController> logger)
+    //    {
+    //        Configuration = conf;
+    //        servicioApi = api;
+    //        _logger = logger;
+    //    }
+
+    //    public IActionResult Index()
+    //    {
+    //        try
+    //        {
+    //            _logger.LogInformation("Ingreso al home");
+
+    //            if (HttpContext.User.Claims.Count() == 0)
+    //            {
+    //                return LocalRedirect("/Identity/Account/Login");
+    //            }
+
+    //            return View();
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            _logger.LogError(ex, ResourceMessage.ErrorSystem);
+    //            throw;
+    //        }
+    //    }
+
+    //    public IActionResult Privacy()
+    //    {
+    //        return View();
+    //    }
+
+    //    public IActionResult Error404()
+    //    {
+    //        return View();
+    //    }
+
+    //    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    //    public IActionResult Error()
+    //    {
+    //        if (HttpContext.User.Claims.Count() == 0)
+    //        {
+    //            return LocalRedirect("/Identity/Account/Login");
+    //        }
+    //        else { return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); }
+
+
+    //    }
+
+    //}
+
+
     public class HomeController : Controller
     {
-        private readonly IServicioApi servicioApi;
         private readonly ILogger<HomeController> _logger;
-        public IConfiguration Configuration { get; }
-        public HomeController(IConfiguration conf, IServicioApi api, ILogger<HomeController> logger)
+
+        public HomeController(ILogger<HomeController> logger)
         {
-            Configuration = conf;
-            servicioApi = api;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            try
-            {
-                _logger.LogInformation("Ingreso al home");
-               
-                if (HttpContext.User.Claims.Count() == 0)
-                {
-                    return LocalRedirect("/Identity/Account/Login");
-                }
-
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ResourceMessage.ErrorSystem);
-                throw;
-            }
+            return View();
         }
 
         public IActionResult Privacy()
@@ -47,22 +86,10 @@ namespace Opain.Jarvis.Presentacion.Web.Controllers
             return View();
         }
 
-        public IActionResult Error404()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            if (HttpContext.User.Claims.Count() == 0)
-            {
-                return LocalRedirect("/Identity/Account/Login");
-            }
-            else { return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); }
-
-
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
     }
 }

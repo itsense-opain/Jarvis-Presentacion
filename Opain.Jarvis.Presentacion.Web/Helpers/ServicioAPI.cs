@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
-using System.Net.Http.Formatting;
+using System.Net.Http.Json;
 
 namespace Opain.Jarvis.Presentacion.Web.Helpers
 {
@@ -36,7 +36,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             HttpResponseMessage responseMessage = await Cliente.DeleteAsync(servicio).ConfigureAwait(false);
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
@@ -51,7 +51,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             //responseMessage.Content = postParameters;
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
@@ -65,7 +65,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             HttpResponseMessage responseMessage = await Cliente.PostAsync(servicio, postParameters).ConfigureAwait(false);
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
@@ -78,7 +78,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             HttpResponseMessage responseMessage = await Cliente.PutAsync(servicio, postParameters).ConfigureAwait(false);
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);

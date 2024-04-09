@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             this.httpStatus = responseMessage.StatusCode;
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
@@ -48,7 +49,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             this.httpStatus = responseMessage.StatusCode;
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
@@ -62,7 +63,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             this.httpStatus = responseMessage.StatusCode;
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
@@ -76,7 +77,7 @@ namespace Opain.Jarvis.Presentacion.Web.Helpers
             this.httpStatus = responseMessage.StatusCode;
             if (responseMessage.IsSuccessStatusCode)
             {
-                return await responseMessage.Content.ReadAsAsync<T>();
+                return await responseMessage.Content.ReadFromJsonAsync<T>();
             }
 
             return default(T);
