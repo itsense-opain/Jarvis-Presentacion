@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewData["Title"] = "Cantidad de transitos";
+}
+
+<h1>Informes</h1>
+
+<div class="menu__informes">
+    <ul class="nav nav-tabs d-flex flex-wrap">
+        <li class="nav-item">
+            <a href="" class="nav-link">Infrasa</a>
+        </li>
+        <li class="nav-item">
+            <a href="" class="nav-link">
+                Cobro
+            </a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Anexos
+            </a>
+            <div class="dropdown-menu">
+                <a href="" class="dropdown-item">Tasas</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">Parqueo</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">GPU</a>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">Fuentes</div>
+
+                <ul>
+                    <li>
+                        <a href="" class="dropdown-item">Aerocivil</a>
+                    </li>
+                    <li>
+                        <a href="" class="dropdown-item">Parqueo</a>
+                    </li>
+                    <li>
+                        <a href="" class="dropdown-item">Fuentes</a>
+                    </li>
+                    <li>
+                        <a href="" class="dropdown-item">GPU</a>
+                    </li>
+                </ul>
+
+
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Facturas
+            </a>
+            <div class="dropdown-menu">
+                <a href="" class="dropdown-item">Fiducia</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">Número de factura</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">Pagar por <img src="~/images/logo-pse.png" alt="Pago por PSE" class="img-fluid" /></a>
+            </div>
+        </li>
+
+        <li class="nav-item dropdown">
+            <a href="" class="nav-link dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Estadísticas
+            </a>
+            <div class="dropdown-menu">
+                <div class="dropdown-item">
+                    Actividad de usuarios
+                </div>
+                <ul>
+                    <li><a href="./estadisticasingresos" class="dropdown-item">Ingresos</a></li>
+                    <li><a href="./estadisticasCargueArchivos" class="dropdown-item">Cargue de archivos</a></li>
+                    <li><a href="./estadisticasHorasIngreso" class="dropdown-item">Horas de ingresos</a></li>
+                </ul>
+
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">
+                    Actividad de aerolíneas
+                </div>
+                <ul>
+                    <li><a href="./estadisticasCantidadVuelos" class="dropdown-item">Cantidad de vuelos</a></li>
+                    <li><a href="./estadisticasCantidadPasajeros" class="dropdown-item">Cantidad de pasajeros</a></li>
+                    <li><a href="./estadisticasCantidadTransitos" class="dropdown-item">Cantidad de tránsitos</a></li>
+                    <li><a href="./estadisticasDestinos" class="dropdown-item">Destinos</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div class="sin__contenido mb-5">
+    <div class="bg--white">
+        <div class="row">
+            <div class="col-sm-3 pt-2">
+                Seleccione las fechas:
+            </div>
+            <div class="col-sm-9">
+                <form class="needs-validation" novalidate>
+                    <div class="form-inline float-right">
+                        <div class="form-group  search__date--width">
+                            <img src="~/images/novedad-calendario.png" alt="" />
+                            <input id="startDate" class="text-center" placeholder="Fecha inicial" aria-describedby="validationTooltipUsernamePrepend" required /> - <input id="endDate" class="text-center" placeholder="Fecha final" aria-describedby="validationTooltipUsernamePrepend" required />
+                            <div class="invalid-tooltip">
+                                Por favor escriba o seleccione una fecha valida
+                            </div>
+                            <button type="button" class="btn btn--border ml-2">Buscar</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr />
+        <div>
+
+            <div class="text-right">Total de tránsitos: <strong>115</strong></div>
+        </div>
+    </div>
+</div>

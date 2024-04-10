@@ -1,0 +1,1195 @@
+﻿
+@{
+    ViewData["Title"] = "Administración";
+}
+
+<h1>Administración</h1>
+
+
+<!-- Nav tabs -->
+
+<ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
+    <li class="nav-item">
+        <a href="#pills-home" class="nav-link active" data-toggle="pill" id="pills-home-tab" role="tab" aria-controls="pills-home" aria-selected="true">
+            Crear y consultar usuarios
+            <span class="arrow-tab"></span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#pills-profile" class="nav-link" data-toggle="pill" id="pills-profile-tab" role="tab" aria-controls="pills-profile" aria-selected="false">
+            Parámetros
+            <span class="arrow-tab"></span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#pills-profile" class="nav-link" data-toggle="pill" id="pills-NotificacionVuelosProcesados-tab" role="tab" aria-controls="pills-profile" aria-selected="false">
+            Notificacion de Vuelos Procesados
+            <span class="arrow-tab"></span>
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+        <div class="bg--white">
+            <span>
+                A continuación podrá gestionar los usuarios de las aerolíneas
+            </span>
+        </div>
+        <div class="bg--white mb-4">
+            <table class="example" style="width:100%">
+                <thead>
+                    <tr>
+                        <td style="width:40px">
+                            Estado
+                        </td>
+                        <td style="width:47px">
+                            Nombre
+                        </td>
+                        <td style="width:48px">
+                            Apellido
+                        </td>
+                        <td style="width:41px !important">
+                            Tipo de ID
+                        </td>
+                        <td style="width:80px;">
+                            Número de identificación
+                        </td>
+                        <td>
+                            Correo electrónico
+                        </td>
+                        <td>
+                            Teléfono
+                        </td>
+                        <td>
+                            Cargo
+                        </td>
+                        <td>
+                            Perfil
+                        </td>
+                        <td>
+                            Aerolínea
+                        </td>
+                        <td style="width:52px">
+                            Acciones
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Activo
+                        </td>
+                        <td>
+                            Miguel
+                        </td>
+                        <td>
+                            Gonzáles
+                        </td>
+                        <td>
+                            C.C
+                        </td>
+                        <td>
+                            1234567897
+                        </td>
+                        <td class="text-break">
+                            miguel.gonzales@avianca.com
+                        </td>
+                        <td>
+                            31024567897
+                        </td>
+                        <td>
+                            Gerente
+                        </td>
+                        <td>
+                            Super Administrados
+                        </td>
+                        <td>
+                            Avianca
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".eliminar">
+                                <img src="~/images/borrar.png" alt="Eliminar" />
+                            </button>
+                            <button type="button" class="btn btn--simple d-inline float-right p-1" data-toggle="modal" data-target=".editar">
+                                <img src="~/images/editar.png" alt="Editar" />
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Inactivo
+                        </td>
+                        <td>
+                            Carlos Cesar
+                        </td>
+                        <td>
+                            Rojas
+                        </td>
+                        <td>
+                            C.E.
+                        </td>
+                        <td>
+                            675895
+                        </td>
+                        <td class="text-break">
+                            carlos.rojas@americaairlines.com.co
+                        </td>
+                        <td>
+                            3214567896
+                        </td>
+                        <td>
+                            Tripulante
+                        </td>
+                        <td>
+                            Usuario
+                        </td>
+                        <td>
+                            LATAM
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".eliminar">
+                                <img src="~/images/borrar.png" alt="Eliminar" />
+                            </button>
+                            <button type="button" class="btn btn--simple d-inline float-right p-1" data-toggle="modal" data-target=".editar">
+                                <img src="~/images/editar.png" alt="Editar" />
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="tab-pane fade mb-5" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Modificar valor de tasa aeroportuaria
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="text-right">
+                                <button type="submit" id="any_button" class="btn btn--border" data-toggle="modal" data-target=".guardado"><img src="~/images/guardar.png" alt="Guardar cambios" class="img-fluid mr-2 ml-2">Guardar cambios</button>
+                            </div>
+                            <hr />
+                            <div class="form-inline justify-content-center input__TMR--height">
+                                <div class="form-group tamano mb-2">
+                                    <label for="cop" class="">$</label>
+                                    <input type="number" class="form-control mr-2" id="cop" placeholder="0" required> COP
+                                    <div class="mr-5 ml-5">=</div>
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba un valor valido
+                                    </div>
+                                </div>
+                                <div class="form-group tamano mb-2">
+                                    <label for="usd" class="">$</label>
+                                    <input type="number" class="form-control mr-2" id="usd" placeholder="0" required> USD
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba un valor valido
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Horario de operación para los usuarios en la plataforma
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="text-right">
+                                <button type="button" id="dfg" class="btn btn--border" data-toggle="modal" data-target=".guardado"><img src="~/images/guardar.png" alt="Guardar cambios" class="img-fluid mr-2 ml-2">Guardar cambios</button>                            </div>
+                            <hr />
+                            <div class="col-sm-6 offset-sm-3">
+                                <div class="justify-content-center d-flex mb-2">
+
+                                    <div class="form-group flex-fill mb-2 mr-2 time--width">
+                                        <input class="timepicker" />
+                                        <div class="invalid-tooltip">
+                                            Por favor escriba un valor valido
+                                        </div>
+                                    </div>
+                                    <div class="flex-fill text-center mt-2">
+                                        hasta
+                                    </div>
+                                    <div class="form-group flex-fill mb-2 ml-2  time--width">
+                                        <input class="timepicker" />
+                                        <div class="invalid-tooltip">
+                                            Por favor escriba un valor valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Habilitar el acceso a la plataforma para una aerolínea en especifica 1
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="text-right">
+                                <button type="button" id="any_button" class="btn btn--border" data-toggle="modal" data-target=".editarHora"><img src="~/images/editar.png" alt="Editar acceso" class="img-fluid mr-2 ml-2">Editar acceso</button>
+                            </div>
+                            <hr />
+                            <div class="form-group col-sm-6 offset-sm-3 mb-4">
+                                <p>Aerolínea</p>
+                                <select id="aerolinea" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="CC">Avianca</option>
+                                    <option value="CE">Copa airlines</option>
+                                    <option value="NIT">LATAM</option>
+                                    <option value="ETC">etc</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione una opción
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 offset-sm-3">
+                                <p>Establecer hora de acceso</p>
+                                <div class="justify-content-center d-flex mb-4">
+
+                                    <div class="form-group flex-fill mb-2 mr-2 time--width">
+                                        <input class="timepicker" />
+                                        <div class="invalid-tooltip">
+                                            Por favor escriba un valor valido
+                                        </div>
+                                    </div>
+                                    <div class="flex-fill text-center mt-2">
+                                        hasta
+                                    </div>
+                                    <div class="form-group flex-fill mb-2 ml-2  time--width">
+                                        <input class="timepicker" />
+                                        <div class="invalid-tooltip">
+                                            Por favor escriba un valor valido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 offset-sm-3">
+                                <button type="submit" id="any_button" class="btn btn--border btn-block" data-toggle="modal" data-target=".creado">
+                                    <img src="~/images/guardar.png" alt="Crear" class="img-fluid mr-2 ml-2">Crear
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Desactivar o activar una aerolínea en especifica
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="text-right">
+                                <button type="button" id="" class="btn btn--border"  data-toggle="modal" data-target=".guardado"><img src="~/images/guardar.png" alt="Guardar cambios" class="img-fluid mr-2 ml-2">Guardar cambios</button>
+                            </div>
+                            <hr />
+                            <table class="example2" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <td style="width:50%">
+                                            Nombre de aerolínea
+                                        </td>
+                                        <td style="width:50%">
+                                            Acción
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="width:50%">
+                                            LATAM
+                                        </td>
+                                        <td style="width:50%">
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider round">
+                                                    <span>Activo</span>
+                                                </span>
+                                                <span class="absolute-no">Inactivo</span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            LATAM
+                                        </td>
+                                        <td>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider round">
+                                                    <span>Activo</span>
+                                                </span>
+                                                <span class="absolute-no">Inactivo</span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            LATAM
+                                        </td>
+                                        <td>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider round">
+                                                    <span>Activo</span>
+                                                </span>
+                                                <span class="absolute-no">Inactivo</span>
+                                            </label>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Cantidad de usuarios que se pueden crear en la plataforma
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="text-right">
+                                <button type="button" id="dfg" class="btn btn--border" data-toggle="modal" data-target=".guardado"><img src="~/images/guardar.png" alt="Guardar cambios" class="img-fluid mr-2 ml-2">Guardar cambios</button>
+                            </div>
+                            <hr />
+                            <table class="example2" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <td style="width:50%">
+                                            Nombre de aerolínea
+                                        </td>
+                                        <td style="width:50%">
+                                            Cantidad de usuarios a crear
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="width:50%">
+                                            LATAM
+                                        </td>
+                                        <td style="width:50%">
+                                            <input type="number" class="" value="50" required />
+                                            <div class="invalid-tooltip">
+                                                Por favor escriba un valor valido
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50%">
+                                            LATAM
+                                        </td>
+                                        <td style="width:50%">
+                                            <input type="number" class="" value="50" required />
+                                            <div class="invalid-tooltip">
+                                                Por favor escriba un valor valido
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:50%">
+                                            LATAM
+                                        </td>
+                                        <td style="width:50%">
+                                            <input type="number" class="" value="50" required />
+                                            <div class="invalid-tooltip">
+                                                Por favor escriba un valor valido
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="card">
+                <div class="card-header" id="headingSix">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            Crear usuarios para anexo y factura
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+
+                            <div class="text-right">
+                                <button type="button" id="any_button" class="btn btn--border" data-toggle="modal" data-target=".editarUsuario">
+                                    <img src="~/images/editar.png" alt="Editar usuario" class="img-fluid mr-2 ml-2">Editar usuario
+                                </button>
+                            </div>
+                            <hr />
+
+                            <div class="form-group col-sm-6 offset-sm-3 mb-4 ">
+                                <p>
+                                    Cargo
+                                </p>
+                                <select id="idType" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="CC">Avianca</option>
+                                    <option value="CE">Copa airlines</option>
+                                    <option value="NIT">LATAM</option>
+                                    <option value="ETC">etc</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione una opción
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-6 offset-sm-3 mb-4">
+                                <p>
+                                    Número de identificación
+                                </p>
+
+                                <input type="number" class="form-control input--width" id="idt" placeholder="Número de identificación" required>
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un número de identificación valido
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 offset-sm-3">
+                                <button type="submit" id="any_button" class="btn btn--border btn-block" data-toggle="modal" data-target=".creado"><img src="~/images/guardar.png" alt="Crear" class="img-fluid mr-2 ml-2">Crear</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="card">
+                <div class="card-header" id="headingSeven">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                            Carga de archivo inicial
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form class="needs-validation" novalidate>
+
+                                    @*<div class="text-right">
+                                            <button type="button" id="any_button" class="btn btn--border"><img src="~/images/guardar.png" alt="Guardar cambios" class="img-fluid mr-2 ml-2">Guardar cambios</button>
+                                        </div>
+                                        <hr />*@
+
+                                    <div class="form-group col-sm-6 offset-sm-3">
+                                        <div class="upload__file float-left pb-3">
+                                            <div class="choose-file d-flex mt-3">
+                                                <input type="file" name="file-1[]" id="file-1" class="inputfile inputfile-2" />
+                                                <label for="file-1" class="flex-grow-1">
+                                                    <span>Seleccionar un archivo</span>
+                                                </label>
+                                                <div class="invalid-tooltip">
+                                                    El archivo no es valido
+                                                </div>
+                                                @*El boton de abajo se activa cuado se carga un archivo*@
+                                                <button type="submit" class="btn btn--border">
+                                                    <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> Subir archivo
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+<!--Modal eliminar pregunta-->
+<div class="modal fade advertencia eliminar" tabindex="-1" role="dialog" aria-labelledby="eliminar" aria-hidden="true">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/advertencia.png" class="img-fluid" />
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-4 offset-sm-4">
+                        <p>
+                            ¿Esta seguro de eliminar este usuario?
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">No</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn--default btn-block" data-toggle="modal" data-target=".errorProceso">Si</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal error-->
+<div class="modal fade advertencia errorProceso" tabindex="-1" role="dialog" aria-labelledby="errorProceso" aria-hidden="true">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/advertencia.png" class="img-fluid" />
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-4 offset-sm-4">
+                        <p>
+                            Ha ocurrido un error,<br />
+                            no se ha podido procesar su solicitud
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 offset-sm-3">
+                            <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal crear nuevo usuario-->
+<div class="modal fade crear" tabindex="-1" role="dialog" aria-labelledby="crear" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="container">
+                        <h1>
+                            Crear usuario
+                        </h1>
+                        <p>
+                            A continuación llene los siguientes campos
+                        </p>
+                        <hr />
+
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label for="Name">Nombre</label>
+                                <input type="text" class="form-control" id="Name" placeholder="Nombre" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el nombre del usuario
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label for="lastName">Apellido</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Apellido" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el apellido del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="idType">Tipo de identificación</label>
+                                <select id="idType" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="CC">Cédula de ciudadanía</option>
+                                    <option value="CE">Cédula de extrajería</option>
+                                    <option value="NIT">NIT</option>
+                                    <option value="ETC">etc</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el tipo de identificación
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="idNumber">Número de identificación</label>
+                                <input type="number" class="form-control" id="idNumber" placeholder="Número de identificación" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el número de identificación del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="email">Correo electrónico</label>
+                                <input type="email" class="form-control" id="email" placeholder="Correo electrónico" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un correo electrónico valido
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="phone">Teléfono</label>
+                                <input type="tel" class="form-control" id="phone" placeholder="Teléfono" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un número de teléfono
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="cargo">Cargo</label>
+                                <input type="text" class="form-control" id="cargo" placeholder="Cargo" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el cargo
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="Perfil">Perfil</label>
+                                <select id="Perfil" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="1">Perfil 1</option>
+                                    <option value="2">Perfil 2</option>
+                                    <option value="3">Perfil 2</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione el tipo de perfil
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="airline">Aerolínea</label>
+                                <select id="airline" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="1">Avianca</option>
+                                    <option value="2">America airlines</option>
+                                    <option value="3">LATAM</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione la aerolínea
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn--default btn-block">Crear usuario</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal editar usuario-->
+<div class="modal fade editar" tabindex="-1" role="dialog" aria-labelledby="editar" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="container">
+                        <h1>Editar usuario</h1>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p>Para editar la información de clic sobre el campo correspondiente</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="text-right col-sm-6 offset-sm-6">
+                                Estado del usuario
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round">
+                                        <span>Activo</span>
+                                    </span>
+                                    <span class="absolute-no">Inactivo</span>
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label for="Name">Nombre</label>
+                                <input type="text" class="form-control" id="Name" placeholder="Nombre" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el nombre del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="lastName">Apellido</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Apellido" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el apellido del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="typeID">Tipo de identificación</label>
+                                <select id="typeID" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="cc">Cédula de ciudadanía</option>
+                                    <option value="ce">Cédula de extranjería</option>
+                                    <option value="nit">NIT</option>
+                                    <option value="pasaporte">Pasaporte</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el apellido del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="numberID">Número de identificación</label>
+                                <input type="number" class="form-control" id="numberID" placeholder="Número de identificación" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un número de identificación
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="mail">Correo electrónico</label>
+                                <input type="email" class="form-control" id="mail" placeholder="Correo electrónico" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un correo electrónico
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="tel">Teléfono</label>
+                                <input type="tel" class="form-control" id="tel" placeholder="Teléfono" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un número de teléfono
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="cargo">Cargo</label>
+                                <input type="text" class="form-control" id="cargo" placeholder="Cargo" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el cargo
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="Perfil">Perfil</label>
+                                <select id="Perfil" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="1">Super administrador</option>
+                                    <option value="2">Administrador</option>
+                                    <option value="3">Usuario</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione un Perfil
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="aero">Aerolínea</label>
+                                <select id="aero" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="avianca">Avianca</option>
+                                    <option value="latam">LATAM</option>
+                                    <option value="copa">Copa Airlines</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione una aerolínea
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn--default btn-block" data-dismiss="modal">Guardar cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal guardado correctamente-->
+<div class="modal fade advertencia guardado" tabindex="-1" role="dialog" aria-labelledby="guardado" aria-hidden="true">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/advertencia.png" class="img-fluid" />
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-4 offset-sm-4">
+                        <p>
+                            Los datos fueron guardados correctamente
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 offset-sm-3">
+                            <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal creado correctamente-->
+<div class="modal fade advertencia creado" tabindex="-1" role="dialog" aria-labelledby="creado" aria-hidden="true">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/advertencia.png" class="img-fluid" />
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-4 offset-sm-4">
+                        <p>
+                            Los datos fueron creados correctamente
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 offset-sm-3">
+                            <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal editar horas de acceso-->
+<div class="modal fade editarHora" tabindex="-1" role="dialog" aria-labelledby="editarHora" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="container">
+
+                        <div class="row">
+                            <div class="col-sm-10 offset-sm-1">
+                                <h1>Editar horas de acceso</h1>
+                                <hr />
+                                <p>Para editar la información de clic sobre el campo correspondiente</p>
+                                <hr />
+                                <table class="example2" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <td style="width:25%">
+                                                Nombre de aerolínea
+                                            </td>
+                                            <td style="width:25%">
+                                                Hora inicial
+                                            </td>
+                                            <td style="width:25%">
+                                                Hora final
+                                            </td>
+                                            <td style="width:25%">
+                                                Acción
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:25%">
+                                                LATAM
+                                            </td>
+                                            <td style="width:25%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:25%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:25%">
+                                                <button type="button" class="btn btn--simple p-1" data-toggle="modal" data-target=".eliminar">
+                                                    <img src="~/images/borrar.png" alt="Eliminar" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:25%">
+                                                LATAM
+                                            </td>
+                                            <td style="width:25%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:25%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:25%">
+                                                <button type="button" class="btn btn--simple p-1" data-toggle="modal" data-target=".eliminar">
+                                                    <img src="~/images/borrar.png" alt="Eliminar" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:25%">
+                                                LATAM
+                                            </td>
+                                            <td style="width:25%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:25%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:25%">
+                                                <button type="button" class="btn btn--simple p-1" data-toggle="modal" data-target=".eliminar">
+                                                    <img src="~/images/borrar.png" alt="Eliminar" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="">
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-10 offset-sm-1">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button type="submit" class="btn btn--default btn-block" data-dismiss="modal">Guardar cambios</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal editar usuarios para anexos y facturas-->
+<div class="modal fade editarUsuario" tabindex="-1" role="dialog" aria-labelledby="editarUsuario" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="container">
+
+                        <div class="row">
+                            <div class="col-sm-10 offset-sm-1">
+                                <h1>Editar horas de acceso</h1>
+                                <hr />
+                                <p>Para editar la información de clic sobre el campo correspondiente</p>
+                                <hr />
+                                <table class="example2" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <td style="width:33.333333%">
+                                                Tipo de identificación
+                                            </td>
+                                            <td style="width:33.333333%">
+                                                Número de identificación
+                                            </td>
+                                            <td style="width:33.333333%">
+                                                Acción
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:33.333333%">
+                                                <select id="idType" class="form-control" required>
+                                                    <option value="">Seleccione una opción</option>
+                                                    <option value="CC">Cédula de ciudadanía</option>
+                                                    <option value="CE">Cédula de extrajería</option>
+                                                    <option value="NIT">NIT</option>
+                                                    <option value="ETC">etc</option>
+                                                </select>
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba el tipo de identificación
+                                                </div>
+                                            </td>
+                                            <td style="width:33.333333%">
+                                                <input type="number" class="" value="50" required />
+                                                <div class="invalid-tooltip">
+                                                    Por favor escriba un valor valido
+                                                </div>
+                                            </td>
+                                            <td style="width:33.333333%">
+                                                <button type="button" class="btn btn--simple p-1" data-toggle="modal" data-target=".eliminar" data-dismiss="modal">
+                                                    <img src="~/images/borrar.png" alt="Eliminar" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <div class="">
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-10 offset-sm-1">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button type="submit" class="btn btn--default btn-block" data-dismiss="modal">Guardar cambios</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

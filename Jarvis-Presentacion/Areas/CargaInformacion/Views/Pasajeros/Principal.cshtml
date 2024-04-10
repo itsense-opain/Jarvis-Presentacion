@@ -1,0 +1,173 @@
+﻿@model IEnumerable<Opain.Jarvis.Dominio.Entidades.PasajeroOtd>
+
+ 
+<div class="row">
+    <div class="col-6">
+        @if (ViewData["acciones"].ToString() == "2")
+        {
+            <h1>PAX EXENTOS</h1>
+        }
+        else
+        {
+            <h1>PASAJEROS</h1>
+        }
+
+    </div>
+    <div class="col-6 text-right">
+        @if (ViewData["acciones"].ToString() == "0")
+        {
+            <button type="button" class="btn btn--border float-right" onclick="InsertarPasajero(@ViewData["operacion"]);">
+                <img src="~/images/crear-usuario.png" alt="Agregar Pasajero" class="img-fluid" /> Agregar pasajero
+            </button>
+        }
+    </div>
+</div>
+
+
+
+<table class="table" id="tblPasajeros">
+    <thead>
+        <tr>
+            @if (ViewData["acciones"].ToString() == "0")
+            {
+                <th>Editar Pasajero </th>
+            }
+            @if (ViewData["acciones"].ToString() == "2")
+            {
+                @*<th>Editar PAX Exento </th>*@
+
+            }
+
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroVuelo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MatriculaVuelo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombrePasajero)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Categoria)
+            </th>
+            @if (ViewData["acciones"].ToString() == "2")
+            {
+                <th>
+                    Viajó ?
+                </th>
+
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewData["acciones"].ToString() != "2")
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (ViewData["acciones"].ToString() == "0")
+                    {
+                        <td>
+                            <button type="button" class="btn btn--simple" onclick="ActualizarPasajero(@item.Id);">
+                                <img src="~/images/editar.png" alt="Editar" />
+                            </button>
+                            @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#accionesPasajero" onclick="CargarVistaPasajero(@item.Id, 'Eliminar');">
+                                    Eliminar
+                                </button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#accionesPasajero" onclick="CargarVistaPasajero(@item.Id, 'Detalle');">
+                                    Ver
+                                </button>*@
+                        </td>
+                    }
+
+                <td>
+                    @item.Fecha.Day.ToString().PadLeft(2, '0')/@item.Fecha.Month.ToString().PadLeft(2, '0')/@item.Fecha.Year.ToString()
+                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroVuelo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MatriculaVuelo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombrePasajero)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categoria)
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (item.Categoria != "EX")
+                    {
+                        continue;
+                    }
+                    @*<td>
+                            <button type="button" class="btn btn--simple" onclick="ActualizarExento(@item.Id);">
+                                <img class="imgEditarEx" src="~/images/editar.png" alt="Editar" />
+                            </button>
+
+                        </td>*@
+                    <td>
+                        @item.Fecha.Day.ToString().PadLeft(2, '0')/@item.Fecha.Month.ToString().PadLeft(2, '0')/@item.Fecha.Year.ToString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroVuelo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MatriculaVuelo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombrePasajero)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categoria)
+                    </td>
+                    <td>
+                        @if (item.Origen == 0)
+                        {
+                            if (item.realiza_viaje != null && item.realiza_viaje == "1")
+                            {
+                                <input type="checkbox" checked="checked" onchange="ActualizarRealizaViajeEx(@item.Id,this,@item.motivo_exencion)" id="viajaex" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" onchange="ActualizarRealizaViajeEx(@item.Id,this,@item.motivo_exencion)" id="viajaex" />
+                            }
+
+                        }
+                       
+                        else
+                        {<span>No está registrado aún</span>}
+
+                    </td>
+                    @*@if (item.realiza_viaje.Equals("0"))
+                        {
+                            <td>No</td>
+                        }
+                        else
+                        {
+                            <td>Si</td>
+                        }*@
+
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+    $("#tblPasajeros").DataTable();
+</script>
+
+<script>
+        $("#divAccionesMary").html("<h1>" + carpeta + "</h1><object type='application/pdf' data='/CargaInformacion/Archivos/ObtenerArchivo?carpeta=" + carpeta + "&nombreArchivo=" + nombre + "' style='width: 100%; height: 73vh'>Por favor de click <a href=data='//CargaInformacion/Archivos/ObtenerArchivo?carpeta=" + carpeta + "&nombreArchivo=" + nombre + "'> <u> aquí para descargar el pdf</u></a></object>");
+    </script>

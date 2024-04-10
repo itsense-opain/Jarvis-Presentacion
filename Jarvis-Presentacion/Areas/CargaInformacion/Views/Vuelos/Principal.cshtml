@@ -1,0 +1,1166 @@
+﻿@model IEnumerable<Opain.Jarvis.Dominio.Entidades.OperacionVueloOtd>
+@inject Opain.Jarvis.Presentacion.Web.Helpers.ServicioComboBox ServicioComboBox
+@{
+    ViewData["Title"] = "Cargar información";
+    //List<Opain.Jarvis.Presentacion.Web.Helpers.TextoValor> Aerolineas = ServicioComboBox.TraerAerolineas2();
+}
+
+
+
+@if (!string.IsNullOrEmpty(ViewData["mensaje"].ToString()))
+{
+    <div id="popMsg" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <p class="mb-0">@ViewData["mensaje"].ToString()</p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <script>
+        function fadeHiden() {
+            var oMsg = document.getElementById("popMsg");
+            oMsg.style.visibility = 'hidden';
+        }
+        setTimeout(fadeHiden, 5000);
+    </script>
+}
+
+@if (ViewData["retornopdfotxt"] != null && ViewData["retornopdfotxt"].ToString() != string.Empty)
+{
+    string TypeFile = ViewData["retornopdfotxt"].ToString();
+    string RutaArchivo = ViewData["filepath"].ToString();
+
+    string Extencion = System.IO.Path.GetExtension(TypeFile);
+    string URLGet = string.Empty;
+    URLGet = "/Download/CierreManual?filepath=" + RutaArchivo.Replace("\\", "xx") + "xx" + TypeFile;
+
+    <script type="text/javascript">
+
+        function UnMomento() {
+            window.location.href = '@URLGet';
+        }
+        setTimeout(UnMomento, 5000);
+    </script>
+}
+
+
+<div class="preloader1" id="LoaderCargue" style="display:none">
+
+    <div class="globo">
+    </div>
+
+    <h2 style="
+    position: absolute;
+    margin-top: 7%;
+    color: #FFC844;
+    font-size: 23px;
+    font-weight: bold;" id="Mensajeloader">
+    </h2>
+
+
+
+</div>
+
+
+
+
+@if (ViewData["CargarPop"] != null)
+{
+    @if (ViewData["CargarPop"].ToString() == "1")
+    {
+        <script type="text/javascript">
+            Loaderp('Prueba', 2);
+        </script>
+
+
+    }
+
+
+
+}
+@if (User.IsInRole("OPAIN") || User.IsInRole("ADMINISTRADOR"))
+{
+    <div class="container" id="divMsgIntegracion"></div>
+    <h1>Ejecuci&oacute;n de integraci&oacute;n manual</h1>
+    <div class="bg--white">
+        <h2>A continuaci&oacute;n se listan los botones para llamar los m&eacute;todos de la integraci&oacute;n</h2>
+        <hr />
+        <button id="btnTraerAero" class="btn btn--border">
+            Traer Aerol&iacute;neas JDE
+        </button>
+
+        <button id="btnTraerVuelos" class="btn btn--border">
+            Traer Vuelos JDE
+        </button>
+
+        <button id="btnTraerCiudades" class="btn btn--border">
+            Traer Ciudades JDE
+        </button>
+
+        <button id="UpdVueloValid" class="btn btn--border">
+            Actualizar Vuelos Validados en JDE
+        </button>
+
+    </div>
+    @*
+        <div class="bg--white">
+            <h2>Cargar archivo contingencia</h2>
+            <hr />
+            <div class="">
+                <div class="upload__file @*float-left">
+                    <strong>Subir "Archivo de contingencia".</strong><br />
+                    Este archivo genera la subida de contingencia de Jarvis.
+                    <form asp-controller="Vuelos" asp-action="CargarArchContingencia" method="post" enctype="multipart/form-data">
+                        <div class="choose-file d-flex mt-3">
+                            <input type="file" name="archivo" id="file-1" class="inputfile inputfile-2" onchange='ValidarContingenciaVuelos(this)' accept=".csv, text/plain" />
+                            <label for="file-1" class="flex-grow-1">
+                                <span>Seleccionar un archivo</span>
+                            </label>
+                            <div class="invalid-tooltip">
+                                El archivo no es valido
+                            </div>
+                            <button type="submit" class="btn btn--border" id="btnCargarLlegada">
+                                <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> Subir archivo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="row">
+                <div class="col-12" id="main"></div>
+            </div>
+        </div>
+    *@
+    <hr>
+
+    <div class="upload__file @*float-left*@" id="cargaArchivosDiv"></div>
+
+
+}
+else
+{
+     <h1>Cargar información</h1>
+}
+
+
+@if (User.IsInRole("AEROLINEA") || User.IsInRole("SUPERVISOR"))
+{
+    <ul class="nav nav-pills mb-3 justify-content-center" id="vuelosTabs" role="tablist">
+        <li class="nav-item">
+            @if (ViewBag.tabActiva == "1")
+            {
+                <a class="nav-link active" id="cargar-tab" data-toggle="tab" href="#cargar" role="tab" aria-controls="cargar"
+                   aria-selected="true">
+                    Cargar y editar vuelos
+                    <span class="arrow-tab"></span>
+                </a>
+            }
+            else
+            {
+                <a class="nav-link" id="cargar-tab" data-toggle="tab" href="#cargar" role="tab" aria-controls="cargar"
+                   aria-selected="true">
+                    Cargar y editar vuelos
+                    <span class="arrow-tab"></span>
+                </a>
+            }
+
+        </li>
+        <li class="nav-item">
+            @if (ViewBag.tabActiva == "2")
+            {
+                <a class="nav-link active" id="historico-tab" data-toggle="tab" href="#historico" role="tab" aria-controls="historico"
+                   aria-selected="true">
+                    Vuelos registrados en el sistema
+                    <span class="arrow-tab"></span>
+                </a>
+            }
+            else
+            {
+                <a class="nav-link" id="historico-tab" data-toggle="tab" href="#historico" role="tab" aria-controls="historico"
+                   aria-selected="true">
+                    Vuelos registrados en el sistema
+                    <span class="arrow-tab"></span>
+                </a>
+            }
+
+        </li>
+    </ul>
+    <div class="tab-content" id="vuelosContenido">
+        @if (ViewBag.tabActiva == "1")
+        {
+            <div class="tab-pane fade show active" id="cargar" role="tabpanel" aria-labelledby="cargar-tab">
+                @if (ViewBag.HabilitaCargue == "1")
+                {
+                    <div class="bg--white">
+                        <h2>Cargar formato </h2>
+                        <hr />
+                        <div class="">
+
+                            <div class="upload__file @*float-left*@" id="cargaArchivosDiv">
+                                <strong>Subir "Formato cierre de vuelo saliendo".</strong><br />
+                                Este archivo se vincula con la tabla ubicada en la parte inferior.
+                                <form asp-controller="Vuelos" asp-action="Cargar" method="post" enctype="multipart/form-data" id="CargarArchivo">
+                                    <input type="hidden" name="modalidad" value="LLEGADA" />
+                                    <input type="hidden" name="cantRegistro" id="cantRegistroLlegada" value="" />
+                                    <div class="choose-file d-flex mt-3">
+                                        <input type="file" name="archivo" id="file-1" class="inputfile inputfile-2" onchange='LeerTexto(this, "LLEGADA")' accept=".csv, text/plain" />
+                                        <label for="file-1" class="flex-grow-1">
+                                            <span>Seleccionar un archivo</span>
+                                        </label>
+                                        <div class="invalid-tooltip">
+                                            El archivo no es valido
+                                        </div>
+                                        <button type="submit" class="btn btn--border" id="btnCargarLlegada" onclick="Loaderp('Cargando Archivo',2);">
+                                            <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> Subir archivo
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12" id="main"></div>
+                        </div>
+                    </div>
+                }
+
+        <div class="bg--white">
+            <h2>Filtro de fechas</h2>
+            <hr />
+            <div class="row">
+                <div class="form-inline d-flex justify-content-center">
+                    <div class="form-group">
+                        <label for="fechaInicio">Fecha de inicio</label>
+                        <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaInidefault" id="fechaInicio" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaFinal">Fecha final</label>
+                        <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaFindefault" id="fechaFinal" class="form-control">
+                    </div>
+                    <div class="form-group mr-3">
+                        <label for="numeroVuelo"># Vuelo</label>
+                        <input type="text" id="numeroVuelo" value="@ViewBag.numeroVuelo" class="form-control">
+                    </div>
+                    <button id="btnBuscarVuelosFecha" class="btn btn--border">
+                        <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+                    </button>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="row mt-4">
+                <div class="d-flex">
+                    <div class="float-left pt-2 mr-2 color-gray">
+                        Seleccione tipo de vuelo:
+                    </div>
+                    <div class="select--gray">
+                        <input class="styled-checkbox" id="chkVN" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloNacional) || ViewBag.chkVueloNacional.Contains("DOM")?"checked":"")>
+                        <label for="chkVN">Vuelos nacionales</label>
+                    </div>
+                    <div class="select--orange">
+                        <input class="styled-checkbox" id="chkVI" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloInternacional) || ViewBag.chkVueloInternacional.Contains("INT")?"checked":"")>
+                        <label for="chkVI">Vuelos internacionales</label>
+                    </div>
+                    <button type="button" class="btn btn--border float-right btnModalPDF" data-toggle="modal" style="display: none;">
+                        <img src="~/images/crear-usuario.png" alt="Agregar Vuelo" class="img-fluid" /> Agregar vuelo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+            <div class="bg--white">
+                <div class="d-flex" id="panelCantidadRegistrosCargados" style="display:none;">
+                    <div class="flex-grow-1 pt-2">
+                        A continuación encontrara el resumen de los vuelos que han sido cargados
+                    </div>
+                    <div class="text-right vertical-line--left">
+                        <span class="upload__text">Usted ha cargado vuelos</span>
+                            <span class="upload__number" id="CantidadVuelos">
+                            @if (!string.IsNullOrEmpty(ViewData["cantRegistros"].ToString()))
+                            {
+                                @ViewData["cantRegistros"]
+                            }
+                            else
+                            {
+                                <text>0</text>
+                            }
+                        </span>
+                    </div>
+                </div>
+                <hr />
+                <div class="table-responsive-lg">
+                    @await Component.InvokeAsync("Vuelos", new { listadoVuelos = ViewBag.VuelosPendientes })
+                </div>
+            </div>
+            <form asp-action="Confirmar" method="post" id="formularioVuelos">
+                <button type="button" class="btn btn--default btn-block mt-3 mb-2" data-toggle="modal" data-target=".advertencia">Guardar carga</button>
+            </form>
+        </div>
+            <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                <div class="bg--white">
+                    <h2>Filtro de fechas</h2>
+                    <hr />
+                    <div class="row">
+                        <div class="form-inline d-flex justify-content-center">
+                            <div class="form-group">
+                                <label for="fechaInicioHistorico">Fecha de inicio</label>
+                                <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaInicioHistoricoDefault" id="fechaInicioHistorico" class="form-control">
+                            </div>
+                            <div class="form-group mr-3">
+                                <label for="fechaFinalHistorico">Fecha final</label>
+                                <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaFinHistoricoDefault" id="fechaFinalHistorico" class="form-control">
+                            </div>
+                            <button id="btnBuscarDatosFecha" class="btn btn--border">
+                                <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+                            </button>
+                        </div>
+
+                        @*<button id="btnRangoFechas" class="btn btn--border">
+                <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+            </button>*@
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="d-flex">
+                            <div class="float-left pt-2 mr-2 color-gray">
+                                Seleccione tipo de vuelo:
+                            </div>
+
+                            <div class="select--gray">
+                                <input class="styled-checkbox" id="chkVNH" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloNacionalHistorico) || ViewBag.chkVueloNacionalHistorico.Contains("DOM")?"checked":"false")>
+                                <label for="chkVNH">Vuelos nacionales</label>
+                            </div>
+                            <div class="select--orange">
+                                <input class="styled-checkbox" id="chkVIH" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloInternacionalHistorico) || ViewBag.chkVueloInternacionalHistorico.Contains("INT")?"checked":"false")>
+                                <label for="chkVIH">Vuelos internacionales</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg--white">
+                    <div class="d-flex">
+                        <div class="flex-grow-1 pt-2 pb-2">
+                            A continuación, se muestra el resumen de los vuelos que han sido guardados en el sistema
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="table-responsive-lg" id="divVuelosHistoricos">
+                        @await Component.InvokeAsync("VuelosHistoricos", new { listadoVuelos = Model })
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="tab-pane fade" id="cargar" role="tabpanel" aria-labelledby="cargar-tab">
+                <div class="bg--white">
+                    <h2>Cargar formato </h2>
+                    <hr />
+                    <div class="">
+                        <div class="upload__file @*float-left*@">
+                            <strong>Subir "Formato cierre de vuelo saliendo".</strong><br />
+                            Este archivo se vincula con la tabla ubicada en la parte inferior.
+                            <form asp-controller="Vuelos" asp-action="Cargar" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="modalidad" value="LLEGADA" />
+                                <input type="hidden" name="cantRegistro" id="cantRegistroLlegada" value="" />
+                                <div class="choose-file d-flex mt-3">
+                                    <input type="file" name="archivo" id="file-1" class="inputfile inputfile-2" onchange='LeerTexto(this, "LLEGADA")' accept=".csv, text/plain" />
+                                    <label for="file-1" class="flex-grow-1">
+                                        <span>Seleccionar un archivo</span>
+                                    </label>
+                                    <div class="invalid-tooltip">
+                                        El archivo no es valido
+                                    </div>
+                                    <button type="submit" class="btn btn--border" id="btnCargarLlegada" onclick="Loaderp();">
+                                        <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> Subir archivo
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        @*<div class="upload__file float-right">
+                <strong>Subir "Formato cierre de vuelo entrando".</strong> <em class="optional">(opcional)</em><br />
+                Este archivo se vincula con la tabla ubicada en la parte inferior.
+                <form asp-controller="Vuelos" asp-action="Cargar" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="modalidad" value="SALIDA" />
+                <input type="hidden" name="cantRegistro" id="cantRegistroSalida" value="" />
+                <div class="choose-file d-flex mt-3">
+                <input type="file" name="archivo" id="file-2" class="inputfile inputfile-2" onchange='LeerTexto(this, "SALIDA")' accept="image/png, image/jpeg,application/pdf"/>
+                <label for="file-2" class="flex-grow-1">
+                <span>Seleccionar un archivo</span>
+                </label>
+                <div class="invalid-tooltip">
+                El archivo no es valido
+                </div>
+                <button type="submit" class="btn btn--border" id="btnCargarSalida">
+                <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> Subir archivo
+                </button>
+                </div>
+                </form>
+                </div>*@
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12" id="main"></div>
+                    </div>
+                </div>
+
+        <div class="bg--white">
+            <h2>Filtro de fechas</h2>
+            <hr />
+            <div class="row">
+                <div class="form-inline d-flex justify-content-center">
+                    <div class="form-group">
+                        <label for="fechaInicio">Fecha de inicio</label>
+                        <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaInidefault" id="fechaInicio" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaFinal">Fecha final</label>
+                        <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaFindefault" id="fechaFinal" class="form-control">
+                    </div>
+                    <div class="form-group mr-3">
+                        <label for="numeroVuelo"># Vuelo</label>
+                        <input type="text" id="numeroVuelo" value="@ViewBag.numeroVuelo" class="form-control">
+                    </div>
+                    <button id="btnBuscarVuelosFecha" class="btn btn--border">
+                        <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+                    </button>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="row mt-4">
+                <div class="d-flex">
+                    <div class="float-left pt-2 mr-2 color-gray">
+                        Seleccione tipo de vuelo:
+                    </div>
+
+                    <div class="select--gray">
+                        <input class="styled-checkbox" id="chkVN" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloNacional) || ViewBag.chkVueloNacional.Contains("DOM")?"checked":"false")>
+                        <label for="chkVN">Vuelos nacionales</label>
+                    </div>
+                    <div class="select--orange">
+                        <input class="styled-checkbox" id="chkVI" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloInternacional) || ViewBag.chkVueloInternacional.Contains("INT")?"checked":"false")>
+                        <label for="chkVI">Vuelos internacionales</label>
+                    </div>
+                    <button type="button" class="btn btn--border float-right hidden btnModalPDF" data-toggle="modal" style="display: none;">
+                        <img src="~/images/crear-usuario.png" alt="Agregar Vuelo" class="img-fluid" /> Agregar vuelo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg--white">
+            <div class="d-flex" id="panelCantidadRegistrosCargados" style="display:none;">
+                <div class="flex-grow-1 pt-2">
+                    A continuación encontrara el resumen de los vuelos que han sido cargados
+                </div>
+                <div class="text-right vertical-line--left">
+                    <span class="upload__text">Usted ha cargado vuelos</span>
+                    <span class="upload__number">
+                        @if (!string.IsNullOrEmpty(ViewData["cantRegistros"].ToString()))
+                        {
+                            @ViewData["cantRegistros"]
+                        }
+                        else
+                        {
+                            <text>0</text>
+                        }
+                    </span>
+                </div>
+            </div>
+            <hr />
+            <div class="table-responsive-lg">
+                @await Component.InvokeAsync("Vuelos", new { listadoVuelos = ViewBag.VuelosPendientes })
+            </div>
+        </div>
+        <form asp-action="Confirmar" method="post" id="formularioVuelos">
+            <button type="button" class="btn btn--default btn-block mt-3 mb-5" data-toggle="modal" data-target=".advertencia">Guardar carga</button>
+        </form>
+    </div>
+            <div class="tab-pane fade  show active" id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                <div class="bg--white">
+                    <h2>Filtro de fechas</h2>
+                    <hr />
+                    <div class="row">
+
+                        <div class="form-inline d-flex justify-content-center">
+                            <div class="form-group">
+                                <label for="fechaInicioHistorico">Fecha de Inicio</label>
+                                <input type="date" min="1900-12-31" max="2100-12-31" id="fechaInicioHistorico" value="@ViewBag.fechaInicioHistoricoDefault" class="form-control">
+                            </div>
+                            <div class="form-group mr-3">
+                                <label for="fechaFinalHistorico">Fecha Final</label>
+                                <input type="date" min="1900-12-31" max="2100-12-31" id="fechaFinalHistorico" value="@ViewBag.fechaFinHistoricoDefault" class="form-control">
+                            </div>
+                            <button id="btnBuscarDatosFecha" class="btn btn--border">
+                                <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+                            </button>
+                        </div>
+
+
+                        @*<button id="btnRangoFechas" class="btn btn--border">
+                <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+            </button>*@
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="d-flex">
+                            <div class="float-left pt-2 mr-2 color-gray">
+                                Seleccione tipo de vuelo:
+                            </div>
+
+                            <div class="select--gray">
+                                <input class="styled-checkbox" id="chkVNH" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloNacionalHistorico) || ViewBag.chkVueloNacionalHistorico.Contains("DOM")?"checked":"false")>
+                                <label for="chkVNH">Vuelos nacionales</label>
+                            </div>
+                            <div class="select--orange">
+                                <input class="styled-checkbox" id="chkVIH" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloInternacionalHistorico) || ViewBag.chkVueloInternacionalHistorico.Contains("INT")?"checked":"false")>
+                                <label for="chkVIH">Vuelos internacionales</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg--white">
+                    <div class="d-flex">
+                        <div class="flex-grow-1 pt-2 pb-2">
+                            A continuación, se muestra el resumen de los vuelos que han sido guardados en el sistema
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="table-responsive-lg" id="divVuelosHistoricos">
+                        @await Component.InvokeAsync("VuelosHistoricos", new { listadoVuelos = Model })
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    <!--Modal insertar Vuelo-->
+    <div class="modal bd-example-modal-lg" id="insertarVuelo">
+        <div class="modal-dialog modal--big">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn-block btnCloseModal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <h1>
+                            INSERTAR VUELO
+                        </h1>
+                        @await Html.PartialAsync("/Areas/CargaInformacion/Views/Vuelos/Insertar.cshtml", new Opain.Jarvis.Dominio.Entidades.OperacionVueloOtd { })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (User.IsInRole("OPAIN") || User.IsInRole("ADMINISTRADOR"))
+{
+<div class="bg--white">
+    <h2>Filtro de fechas</h2>
+    <hr />
+    <div class="row">
+        <div class="form-inline d-flex justify-content-center">
+            <div class="form-group">
+                <label for="fechaInicio">Fecha de inicio</label>
+                <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaInidefault" id="fechaInicio" class="form-control">
+            </div>
+            <div class="form-group mr-3">
+                <label for="fechaFinal">Fecha final</label>
+                <input type="date" min="1900-12-31" max="2100-12-31" value="@ViewBag.fechaFindefault" id="fechaFinal" class="form-control">
+            </div>
+            <button id="btnRangoFechas" class="btn btn--border">
+                <img src="~/images/buscar.png" alt="Buscar vuelos" class="img-fluid" /> Buscar
+            </button>
+        </div>
+        @*<button type="button" id="btnEditarHorarioAerolinea2" class="btn btn--border btn-block">
+                <img src="~/images/buscar.png" alt="Crear" class="img-fluid mr-2 ml-2">Buscar
+            </button>*@
+
+
+        <div class="clearfix"></div>
+    </div>
+    <div class="row mt-4">
+        <div class="d-flex">
+            <div class="float-left pt-2 mr-2 color-gray">
+                Seleccione tipo de vuelo:
+            </div>
+
+            <div class="select--gray">
+                <input class="styled-checkbox" id="chkVNH" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloNacionalHistorico) || ViewBag.chkVueloNacionalHistorico.Contains("DOM")?"checked":"false")>
+                <label for="chkVNH">Vuelos nacionales</label>
+            </div>
+            <div class="select--orange">
+                <input class="styled-checkbox" id="chkVIH" type="checkbox" @(string.IsNullOrEmpty(ViewBag.chkVueloInternacionalHistorico) || ViewBag.chkVueloInternacionalHistorico.Contains("INT")?"checked":"false")>
+                <label for="chkVIH">Vuelos internacionales</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="bg--white mb-4">
+        <div class="d-flex">
+            <div class="flex-grow-1 pt-2 pb-2">
+                A continuación, se muestra el resumen de los vuelos que han sido guardados en el sistema
+            </div>
+        </div>
+        <hr />
+        <div class="table-responsive-lg" id="divVuelosHistoricos">
+            @await Component.InvokeAsync("VuelosHistoricos", new { listadoVuelos = Model })
+        </div>
+    </div>
+}
+<!--Modal acciones-->
+<div class="modal bd-example-modal-lg" id="accionesVuelo">
+    <div class="modal-dialog modal--big">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+
+                <div class="container" id="divMensaje"></div>
+                <div class="container" id="divAcciones"></div>
+                <div class="container" id="divAcciones2"></div>
+                <div class="container" id="divAccionesMary"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal acciones-->
+<div class="modal bd-example-modal-lg" id="accionesVueloFn">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" id="cerrarFn" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+
+                <div class="container" id="divMensajeFn"></div>
+                <div class="container" id="divAccionesFn"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (User.IsInRole("AEROLINEA") || User.IsInRole("SUPERVISOR"))
+{
+    <button type="button" class="btn btn--border float-right hidden btnModalPDF mb-4 mt-4" data-toggle="modal" style="display: none;">
+        <img src="~/images/crear-usuario.png" alt="Agregar Vuelo" class="img-fluid" /> Agregar vuelo
+    </button>
+
+    <button type="button" id="btnModalPDF" class="btn btn--border float-right hidden  mb-2" data-toggle="modal" data-target="#accionesVueloFn" style="display: none;">
+        <img src="~/images/crear-usuario.png" alt="Agregar Vuelo" class="img-fluid" /> Agregar vuelo
+    </button>
+
+    <!--Modal advertencia-->
+    <div class="modal fade advertencia" id="modalMensaje" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+        <div class="modal-dialog modal--full">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="~/images/advertencia.png" class="img-fluid" alt="Advertencia" />
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="col-sm-6 offset-sm-3">
+                            <p>
+                                ¿Esta seguro(a) que desea guardar operación de vuelos?
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-8 offset-sm-2">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <button type="button" data-toggle="modal" data-dismiss="modal" class="btn btn--default--grey btn-block">Cancelar</button>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button type="button" id="btnGuardarOperacion" data-toggle="modal" data-target="#accionesVueloFn" class="btn btn--default btn-block">Aceptar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+
+
+            $("#btnTraerAero").on("click", function () {
+
+                var conceptoMsg = "Traer Aerolineas JDE";
+                $.ajax({
+                    type: 'GET',
+                    url: "/CargaInformacion/Pasajeros/TraerAeroJDE",
+                    success: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        if (data) {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-warning fade show" role="alert">' + conceptoMsg + ' se ejecutó <strong>exitosamente. </strong></div>';
+                            console.log("Finalizo");
+                        }
+                        else {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                        }
+                    },
+                    error: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                    }
+                })
+            });
+
+            $("#btnTraerVuelos").on("click", function () {
+
+                var conceptoMsg = "Traer Vuelos JDE";
+                $.ajax({
+                    type: 'GET',
+                    url: "/CargaInformacion/Pasajeros/TraerVuelosJDE",
+                    success: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        if (data) {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-warning fade show" role="alert">' + conceptoMsg + ' se ejecutó  <strong>exitosamente. </strong></div>';
+                        }
+                        else {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                        }
+                    },
+                    error: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                    }
+                })
+            });
+
+            $("#btnTraerCiudades").on("click", function () {
+
+                var conceptoMsg = "Traer Ciudades JDE";
+                $.ajax({
+                    type: 'GET',
+                    url: "/CargaInformacion/Pasajeros/TraerCiudadesJDE",
+                    success: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        if (data) {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-warning fade show" role="alert">' + conceptoMsg + ' se ejecutó  <strong>exitosamente. </strong></div>';
+                        }
+                        else {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                        }
+                    },
+                    error: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                    }
+                })
+            });
+
+            $("#UpdVueloValid").on("click", function () {
+
+                var conceptoMsg = "Actualizar Vuelos Validados JDE";
+                $.ajax({
+                    type: 'GET',
+                    url: "/CargaInformacion/Pasajeros/UpdVueloValidJDE",
+                    success: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        if (data) {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-warning fade show" role="alert">' + conceptoMsg + ' se ejecutó  <strong>exitosamente. </strong></div>';
+                        }
+                        else {
+                            document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte tecnico.</div>';
+                        }
+                    },
+                    error: function (data) {
+                        $("#divMsgIntegracion").empty();
+                        document.getElementById('divMsgIntegracion').innerHTML = '<div class="alert alert-dark fade show" role="alert"><strong>Error </strong> ' + conceptoMsg + ', favor contacte con soporte técnico.</div>';
+                    }
+                })
+            });
+
+
+            $("#advertencia").hide();
+            $("#btnModalPDF").hide();
+
+
+            calculos();
+
+            // variables locales de trabajo persistencia de informacion
+            var fechaInicio = obtenerValorParametro('fechaInicio');
+            var fechaFinal = obtenerValorParametro('fechaFinal');
+
+            var bandera = 0;
+            var IdAerolinea = "0";
+            IdAerolinea = obtenerValorParametro('IdAerolinea');
+
+            var path = "";
+            path = obtenerValorParametro('RutaArchivos') + "";
+            var disco = path.substring(0, 1);
+            var carpeta = path.substring(10, 19);
+
+            path = disco + ':/' + carpeta;
+
+            var fch = "";
+            fch = obtenerValorParametro('fch');
+
+            // se recupera valor de filtro fecha inicial
+            if (fechaInicio != null) {
+                $("#fechaInicio").val(fechaInicio);
+                bandera = 1;
+            }
+            // se recupera valor de filtro fecha final
+            if (fechaFinal != null) {
+                $("#fechaFinal").val(fechaFinal);
+                bandera = 1;
+            }
+            // se dispara btn de búsqueda si a sido seleccionada alguna fecha....
+            if (bandera == 1) {
+                $("#btnRangoFechas").trigger("click");
+            }
+
+            if (IdAerolinea > 0) {
+
+                var idOperacionVuelo = '@(ViewData["IdOperacionVuelo"])' == null ? 0 : '@(ViewData["IdOperacionVuelo"])';
+
+                if (idOperacionVuelo != '' && idOperacionVuelo != String.empty) {
+                    var urlFile = "";
+                    urlFile = obtenerValorParametro('RutaArchivos') + "";
+                    openInNewTab(urlFile);
+                    //openInNewTab(path, 908, fch);
+                    $("#btnModalPDF").trigger("click");
+                }
+            }
+
+            var tblVuelos = $("#tblVuelos").DataTable({
+                paging: true,
+                info: true,
+                initComplete: function () {
+                    this.api().columns(2).every(function () {
+                        var column = this;
+                        var select = $('<select class="d-block"><option value=""</option></select>')
+                            .appendTo($(column.header()))
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                }
+            });
+
+            $("#chkVN").change(function () {
+                //VerificarBusqueda();
+            });
+
+            $("#chkVI").change(function () {
+                //VerificarBusqueda();
+            });
+
+            $(".txtVal").on("change", function () {
+                var vlr = ($(this).val() == '' ? 0 : $(this).val());
+
+                if (vlr < 0) {
+                    $(this).val("");
+                    $(this).focus();
+                }
+                calculos($(this).val());
+            });
+
+            $(".btnModalPDF").on("click", function () {
+                $("#insertarVuelo").show();
+                $('body').addClass('modal-open');
+            });
+
+            $(".btnCloseModal").on("click", function () {
+                $("#insertarVuelo").hide();
+                $('body').removeClass('modal-open');
+            });
+
+            $("#btnInsertarVuelo").click(function () {
+
+                var TotalEmbarcados = $("#InsTotalEmbarcados").val();
+                var INF = ($("#InsINF").val() == '' ? 0 : $("#InsINF").val());
+                var TTL = ($("#InsTTL").val() == '' ? 0 : $("#InsTTL").val());
+                var TTC = ($("#InsTTC").val() == '' ? 0 : $("#InsTTC").val());
+                var EX = ($("#InsEX").val() == '' ? 0 : $("#InsEX").val());
+                var TRIP = ($("#InsTRIP").val() == '' ? 0 : $("#InsTRIP").val());
+                var PagoCOP = ($("#InsPagoCOP").val() == '' ? 0 : $("#InsPagoCOP").val());
+                var PagoUSD = ($("#InsPagoUSD").val() == '' ? 0 : $("#InsPagoUSD").val());
+                var tipo = $("#tipo").val();
+
+                if (tipo == 'INT') {
+                    var ttalValores = parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD) + parseInt(PagoCOP);
+                    var restaValores = parseInt(TotalEmbarcados) - parseInt(typeof ttalValores === "undefined" ? 0 : ttalValores);
+                }
+                else if (tipo = 'DOM') {
+
+                    var ttalValores = parseInt(INF) + parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD) + parseInt(PagoCOP);
+                    var restaValores = parseInt(TotalEmbarcados) - parseInt(typeof ttalValores === "undefined" ? 0 : ttalValores);
+
+                    $('body').removeClass('modal-open');
+
+                }
+
+
+                var parrafo = $("#advertencia").find("p");
+
+                if (parseInt(restaValores) != 0) {
+
+                    parrafo.text("La cantidad de pasajeros no coinciden con los valores ingresados");
+                    $("#advertencia").show();
+                } else if (parseInt(PagoCOP) < 0) {
+                    parrafo.text('El campo "Pago en COP" debe ser mayor a cero para continuar');
+                    $("#advertencia").show();
+                } else {
+                    $("#formInsertarVuelo").submit();
+                }
+
+            });
+
+            $("#btnClose").on("click", function () {
+                $("#advertencia").hide();
+            });
+
+
+            $("#tipo").on("change", function () {
+                calculos();
+            });
+
+            function VerificarBusqueda() {
+                if ($('#chkVN').is(':checked') && $('#chkVI').is(':checked')) {
+                    tblVuelos.columns(0).search('').draw();
+                }
+                else if ($('#chkVN').is(':checked') && $('#chkVI').is(':not(:checked)')) {
+                    tblVuelos.columns(0).search('DOM').draw();
+                }
+                else if ($('#chkVN').is(':not(:checked)') && $('#chkVI').is(':checked')) {
+                    tblVuelos.columns(0).search('INT').draw();
+                }
+                else {
+                    tblVuelos.columns(0).search('*').draw();
+                }
+            }
+
+
+            $("#btnBuscarDatosFecha").on("click", function () {
+                var tipoVuelo = "";
+                if ($('#chkVN').is(':checked') && $('#chkVI').is(':checked')) {
+                    tipoVuelo = "";
+                }
+                else if ($('#chkVN').is(':checked') && $('#chkVI').is(':not(:checked)')) {
+                    tipoVuelo = "DOM";
+                }
+                else if ($('#chkVN').is(':not(:checked)') && $('#chkVI').is(':checked')) {
+                    tipoVuelo = "INT";
+                }
+                else {
+                    tipoVuelo = "NONE";
+                }
+
+                var tipoVueloHistorico = "";
+                if ($('#chkVNH').is(':checked') && $('#chkVIH').is(':checked')) {
+                    tipoVueloHistorico = "";
+                }
+                else if ($('#chkVNH').is(':checked') && $('#chkVIH').is(':not(:checked)')) {
+                    tipoVueloHistorico = "DOM";
+                }
+                else if ($('#chkVNH').is(':not(:checked)') && $('#chkVIH').is(':checked')) {
+                    tipoVueloHistorico = "INT";
+                }
+                else {
+                    tipoVueloHistorico = "NONE";
+                }   
+
+                window.location.href = '/CargaInformacion/Vuelos/Principal?tabActiva=2&fechaInicioHistorico=' + $("#fechaInicioHistorico").val() + '&fechaFinalHistorico=' + $("#fechaFinalHistorico").val() + '&numeroVuelo=' + $("#numeroVuelo").val() + '&fechaInicio=' + $("#fechaInicio").val() + '&fechaFinal=' + $("#fechaFinal").val() + '&tipoVuelo=' + tipoVuelo + '&tipoVueloHistorico=' + tipoVueloHistorico;
+
+                //console.log('this is it');
+
+                //$.ajax({
+                //    type: 'POST',
+                //    url: "/CargaInformacion/Vuelos/VuelosHistoricoFechas",
+                //    data:
+                //    {
+                //        fechaInicio: $("#fechaInicio").val(),
+                //        fechaFinal: $("#fechaFinal").val()
+                //    },
+                //    return false
+                //})
+            });
+
+            $("#btnBuscarVuelosFecha").on("click", function () {
+                var tipoVuelo = "";
+                if ($('#chkVN').is(':checked') && $('#chkVI').is(':checked')) {
+                    tipoVuelo = "";
+                }
+                else if ($('#chkVN').is(':checked') && $('#chkVI').is(':not(:checked)')) {
+                    tipoVuelo = "DOM";
+                }
+                else if ($('#chkVN').is(':not(:checked)') && $('#chkVI').is(':checked')) {
+                    tipoVuelo = "INT";
+                }
+                else {
+                    tipoVuelo = "NONE";
+                }
+
+                var tipoVueloHistorico = "";
+                if ($('#chkVNH').is(':checked') && $('#chkVIH').is(':checked')) {
+                    tipoVueloHistorico = "";
+                }
+                else if ($('#chkVNH').is(':checked') && $('#chkVIH').is(':not(:checked)')) {
+                    tipoVueloHistorico = "DOM";
+                }
+                else if ($('#chkVNH').is(':not(:checked)') && $('#chkVIH').is(':checked')) {
+                    tipoVueloHistorico = "INT";
+                }
+                else {
+                    tipoVueloHistorico = "NONE";
+                }
+
+                window.location.href = '/CargaInformacion/Vuelos/Principal?tabActiva=1&fechaInicio=' + $("#fechaInicio").val() + '&fechaFinal=' + $("#fechaFinal").val() + '&numeroVuelo=' + $("#numeroVuelo").val() + '&fechaInicioHistorico=' + $("#fechaInicioHistorico").val() + '&fechaFinalHistorico=' + $("#fechaFinalHistorico").val() + '&tipoVuelo=' + tipoVuelo + '&tipoVueloHistorico=' + tipoVueloHistorico;
+            });
+
+            $(".clickPagina").click(function () {
+                var Pagina = $(this).attr("data-dt-idx");
+                document.location.href = "/CargaInformacion/Vuelos/ObtenerVuelosPendientes?Pagina=" + Pagina;
+            });
+        });
+
+
+
+        function openInNewTab(path) {
+
+            $("#modalMensaje").hide();
+            $("#divMensajeFn").empty();
+            $("#divAccionesFn").empty();
+            // localhost:44310/api/CargarArchivos/ObtenerArchivoPDFAsync?idAerolinea=LAN &fecha=20220622&idOperacionVuelo=26288
+            $("#divAccionesFn").html("<h1>Soporte Vuelos Aerolinea</h1><object type='application/pdf' data='/CargaInformacion/Archivos/ObtenerArchivoPath?Carpeta=NA&Nombre=" + path + "' style='width: 100%; height: 73vh'>Su navegador no soporta el PDF con vista previa, por favor de clic <a href='/CargaInformacion/Archivos/ObtenerArchivoPath?Carpeta=NA&Nombre=" + path + "'> <u> aquí para descargar el pdf</u></a></object>");
+            //$("#divAccionesFn").html("<h1>Soporte Vuelos Aerolinea</h1><object type='application/pdf' data='/CargaInformacion/Archivos/ObtenerArchivoPDF?idAerolinea=974&fecha=20220622&idOperacionVuelo=26288' style='width: 100%; height: 73vh'>Su navegador no soporta el PDF con vista previa, por favor de clic <a href=data='/CargaInformacion/Archivos/ObtenerArchivoPDF?idAerolinea=974&fecha=20220622&idOperacionVuelo=26288'> <u> aquí para descargar el pdf</u></a></object>");
+            //$("#divAccionesFn").html("<h1>Soporte Vuelos Aerolinea</h1><object type='application/pdf' data='/CargaInformacion/Archivos/ObtenerArchivoPDF?idAerolinea=974&fecha=20220622&idOperacionVuelo=26288' style='width: 100%; height: 73vh'>Su navegador no soporta el PDF con vista previa, por favor de clic <a href='192.168.1.17:44310/api/CargarArchivos/ObtenerArchivoPDFAsync?idAerolinea=LAN &fecha=20220622&idOperacionVuelo=26288'> <u> aquí para descargar el pdf</u></a></object>");
+
+        }
+
+
+
+        function obtenerValorParametro(sParametroNombre) {
+            var sPaginaURL = window.location.search.substring(1);
+            var sURLVariables = sPaginaURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) {
+                var sParametro = sURLVariables[i].split('=');
+                if (sParametro[0] == sParametroNombre) {
+                    return sParametro[1];
+                }
+            }
+            return null;
+        }
+
+        function calculos() {
+
+            var INF = ($("#InsINF").val() == '' ? 0 : $("#InsINF").val());
+            var TTL = ($("#InsTTL").val() == '' ? 0 : $("#InsTTL").val());
+            var TTC = ($("#InsTTC").val() == '' ? 0 : $("#InsTTC").val());
+            var EX = ($("#InsEX").val() == '' ? 0 : $("#InsEX").val());
+            var TRIP = ($("#InsTRIP").val() == '' ? 0 : $("#InsTRIP").val());
+            var PagoUSD = ($("#InsPagoUSD").val() == '' ? 0 : $("#InsPagoUSD").val());
+            //var PagoCOP = ($("#InsPagoCOP").val() == '' ? 0 : $("#InsPagoCOP").val());
+            var TotalEmbarcados = $("#InsTotalEmbarcados").val();
+
+            var tipo = $("#tipo").val();
+
+            var ttalSinPagoCOP = 0;
+            var valorPagoCOPNew = 0;
+
+            if (tipo == 'INT') {
+                ttalSinPagoCOP = parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD);
+                valorPagoCOPNew = parseInt(TotalEmbarcados) - parseInt(ttalSinPagoCOP);
+            }
+
+            if (tipo == 'DOM') {
+                ttalSinPagoCOP = parseInt(INF) + parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD);
+                valorPagoCOPNew = parseInt(TotalEmbarcados) - parseInt(ttalSinPagoCOP);
+            }
+
+            $("#InsPagoCOP").val(valorPagoCOPNew);
+        }
+
+        function Loaderp(mensaje, tipo) {
+            loader = document.getElementById("LoaderCargue");
+            Mensajeloader = document.getElementById("Mensajeloader");
+            if (tipo == 1) {
+                formulario = document.getElementById("CantidadVuelos").innerHTML;
+                Mensajeloader.innerText = 'Guardando ' + formulario.trim() + ' Vuelos';
+            }
+            else {
+                Mensajeloader.innerText = mensaje;
+
+            }
+
+
+            loader.style.display = 'flex';
+        }
+
+        $("#CargarArchivo").on("submit", function (eventObj) {
+            var url = new URL(window.location.href);
+            var tipoVuelo = url.searchParams.get("tipoVuelo") != null ? url.searchParams.get("tipoVuelo") : "";
+            var tipoVueloHistorico = url.searchParams.get("tipoVueloHistorico") != null ? url.searchParams.get("tipoVueloHistorico") : "";
+            var numeroVuelo = url.searchParams.get("numeroVuelo") != null ? url.searchParams.get("numeroVuelo") : "";
+            var fechaInicio = url.searchParams.get("fechaInicio") != null ? url.searchParams.get("fechaInicio") : "";
+            var fechaFinal = url.searchParams.get("fechaFinal") != null ? url.searchParams.get("fechaFinal") : "";
+            var fechaInicioHistorico = url.searchParams.get("fechaInicioHistorico") != null ? url.searchParams.get("fechaInicioHistorico") : "";
+            var fechaFinalHistorico = url.searchParams.get("fechaFinalHistorico") != null ? url.searchParams.get("fechaFinalHistorico") : "";
+            $(this).append('<input type="hidden" id="tipoVuelo" name="tipoVuelo" value="' + tipoVuelo + '" />');
+            $(this).append('<input type="hidden" id="tipoVueloHistorico" name="tipoVueloHistorico" value="' + tipoVueloHistorico + '" />');
+            $(this).append('<input type="hidden" id="numeroVuelo" name="numeroVuelo" value="' + numeroVuelo + '" />');
+            $(this).append('<input type="hidden" id="fechaInicio" name="fechaInicios" value="' + fechaInicio + '" />');
+            $(this).append('<input type="hidden" id="fechaFinal" name="fechaFinals" value="' + fechaFinal + '" />');
+            $(this).append('<input type="hidden" id="fechaInicioHistorico" name="fechaInicioHistorico" value="' + fechaInicioHistorico + '" />');
+            $(this).append('<input type="hidden" id="fechaFinalHistorico" name="fechaFinalHistorico" value="' + fechaFinalHistorico + '" />');
+
+            return true;
+        });
+    
+
+
+    </script>
+}

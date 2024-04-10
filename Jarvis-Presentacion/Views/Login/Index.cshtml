@@ -1,0 +1,189 @@
+﻿@page
+@using Opain.Jarvis.Presentacion.Web.Areas.Identity.Pages.Account
+@model LoginNModel
+
+<style>
+    input[type="checkbox"]:checked {
+        background: #ffc107;
+        color: white;
+    }
+
+    input[type="checkbox"] {
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: 0;
+        background: lightgray;
+        height: 16px;
+        width: 16px;
+        border: 1px solid white;
+        color: white;
+        margin-top:10px;
+    }
+
+        input[type="checkbox"]:after {
+            content: ' ';
+            position: relative;
+            left: 40%;
+            top: 20%;
+            width: 15%;
+            height: 40%;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(50deg);
+            display: none;
+        }
+
+        input[type="checkbox"]:checked:after {
+            display: block;
+        }
+</style>
+<div class="row">
+    <div class="col-sm-4 offset-sm-4">
+        <div class="row">
+            <h1 class="col-sm-5 mt-1">
+                Bienvenido
+            </h1>
+            <div class="col-sm-7 text-right">
+                <img src="~/images/title.png" class="img-fluid" alt="Titulo" />
+            </div>
+        </div>
+        <div class="login mt-3">
+            <form id="account" method="post">
+                <div class="form-group">
+
+
+                    <div class="mt-3 mb-4">
+                        <label asp-for="Input.Username"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="validationTooltipUsernamePrepend">
+                                    <img src="~/images/login-usuario.png" class="img-fluid" alt="User" />
+                                </span>
+                            </div>
+                            <input asp-for="Input.Username" class="form-control" />
+                            <span asp-validation-for="Input.Username" class="tool__valide"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 mb-4">
+                        <label asp-for="Input.Password"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="validationTooltipUsernamePrepend">
+                                    <img src="~/images/login-pass.png" class="img-fluid" alt="Password" />
+                                </span>
+                            </div>
+                            <input asp-for="Input.Password" placeholder="Contraseña" class="form-control" />
+                            <span asp-validation-for="Input.Password" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    @if (Model.Debug == false)
+                    {
+                        <div class="mb-3 position-relative">
+                            <!--reCAPTCHA-->
+                            <div class="g-recaptcha mx-auto" style="width:304px" data-callback="imNotARobot" data-sitekey="@Model.SiteKey"></div>
+                            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                            <!--reCAPTCHA-->
+
+                            <div class="tool__valide">@Html.ValidationSummary(true, "")</div>
+                        </div>
+                    }
+
+                    </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn--default btn-block" id="prueba" >Acceder</button>
+                </div>
+                <div class="form-group text-center"><a href="ForgotPassword"> ¿Olvidó su contraseña?</a></div>
+                
+                <a class="" href="~/DocumentoPoliticaTratamientoDeDatos/membrete_politicas_tratamiento_datos.pdf" target="_blank"> Política tratamiento de datos </a>
+                <div class="checkbox">
+
+                    @*<input type="checkbox" asp-for="@Model.Input.AceptarPoliticas" checked="checked" value="@Model.Input.AceptarPoliticas"> Acepto las politicas de tratamiento de datos*@
+
+                    @*@Html.CheckBoxFor(model => model.Input.AceptarPoliticas)*@
+                    <input name="AceptarPoliticas" type="checkbox" id="AceptarPoliticas">
+                    @Html.LabelFor(model => model.Input.AceptarPoliticas)
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    var button = document.getElementById("prueba");
+    /* var AceptarPoliticas = document.getElementsByClassName('checkbox')[0];*/
+    var AceptarPoliticas = document.getElementById("AceptarPoliticas");
+    AceptarPoliticas.checked = false;
+   /* console.log("Disabled");*/
+    // Disable the button on initial page load
+    button.disabled = true;
+
+    //add event listener
+    AceptarPoliticas.addEventListener('click', function (event) {
+        button.disabled = !button.disabled;
+    });
+
+    //button.addEventListener('click', function (event) {
+    //    alert('Enabled!');
+    //});
+
+    var imNotARobot = function () {
+        $(".validation-summary-errors").hide();
+    };
+</script>
+<!--Modal error-->
+<div class="modal fade advertencia errorProceso" id="explorador" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-6 offset-sm-3 mt-4">
+                        <p>
+                            Para una mejor experiencia recomendamos<br />
+                            usar las siguientes versiones:
+                        </p>
+                        <div class="d-flex justify-content-around mt-5 mb-4">
+                            <div class="text-center number-ver">
+                                <a href="https://www.microsoft.com/es-co/windows/microsoft-edge" target="_blank">
+                                    <img src="~/images/edge.svg" alt="Edge" width="50" /><br />
+                                    <span>16+</span> Descargar
+                                </a>
+                            </div>
+                            <div class="text-center number-ver">
+                                <a href="https://www.mozilla.org/es-ES/firefox/new/" target="_blank">
+                                    <img src="~/images/firefox.svg" alt="Firefox" width="50" /><br />
+                                    <span>52+</span> Descargar
+                                </a>
+                            </div>
+                            <div class="text-center number-ver">
+                                <a href="https://www.google.com/intl/es/chrome/" target="_blank">
+                                    <img src="~/images/chrome.svg" alt="Chrome" width="50" /><br />
+                                    <span>57+</span> Descargar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 offset-sm-3">
+                            <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

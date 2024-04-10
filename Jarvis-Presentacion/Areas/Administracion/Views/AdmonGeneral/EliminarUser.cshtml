@@ -1,0 +1,201 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.UsuarioOtd
+@{
+    bool BloquearCampo = false;
+    if (Model.NumeroDocumento == User.Identity.Name)
+    {
+        BloquearCampo = true;
+    }
+
+}
+<h1>Eliminar Usuario</h1>
+ 
+<hr />
+<form id="formUpdate" asp-action="EliminarUsuario">
+    
+    <div class="row">
+        <div class="form-group col-sm-6">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Activo" />
+            <label asp-for="Nombre">Nombre</label>
+            <input type="text" class="form-control" asp-for="Nombre" disabled="disabled" placeholder="Nombre" />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Apellido">Apellido</label>
+            <input type="text" class="form-control" asp-for="Apellido" disabled="disabled" placeholder="Apellido" />
+            <span asp-validation-for="Apellido" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="TipoDocumento">Tipo de identificación</label>
+            <select asp-for="TipoDocumento" disabled="disabled" class="form-control">
+                <option value="">Seleccione una opción</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="CE">Cédula de extranjería</option>
+                <option value="NIT">NIT</option>
+                <option value="Pasap">Pasaporte</option>
+            </select>
+            <span asp-validation-for="TipoDocumento" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="NumeroDocumento">Número de identificación</label>
+            @if (BloquearCampo)
+            {
+                <input type="text" class="form-control" asp-for="NumeroDocumento"  placeholder="Número de identificación" disabled="disabled" />
+            }
+            else
+            {
+                <input type="text" class="form-control" asp-for="NumeroDocumento" disabled="disabled" placeholder="Número de identificación" />
+            }
+            <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+        </div>
+        @*<div class="form-group col-sm-6">
+            <label asp-for="Email">Correo electrónico</label>
+            <input type="email" class="form-control" asp-for="Email" disabled="disabled" placeholder="Correo electrónico" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Telefono">Teléfono</label>
+            <input type="tel" class="form-control" asp-for="Telefono" disabled="disabled" placeholder="Teléfono" />
+            <span asp-validation-for="Telefono" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Cargo">Cargo</label>
+            <input type="text" class="form-control" asp-for="Cargo" disabled="disabled" placeholder="Cargo" />
+            <span asp-validation-for="Cargo" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6">
+            <label asp-for="Perfil">Perfil</label>
+            <select asp-for="Perfil" disabled="disabled" asp-items="@((List<SelectListItem>)ViewData["Perfiles"])" class="form-control"></select>
+            <span asp-validation-for="Perfil" class="text-danger"></span>
+        </div>
+        <div class="form-group col-sm-6" id="divAerolinea">
+            <label asp-for="Aerolinea">Aerolínea</label>
+            <select asp-for="Aerolinea" id="Aerolinea" disabled="disabled" asp-items="@((List<SelectListItem>)ViewData["Aerolineas"])" class="form-control"></select>
+        </div>*@
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+        </div>
+        <div class="col-sm-6">
+            <button type="submit" class="btn btn--default btn-block">Eliminar usuario</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function() {
+    // Handler for .ready() called.
+        perfilAerolinea();
+    });
+
+$("#Perfil").change(function () {
+    perfilAerolinea();
+});
+
+    function perfilAerolinea() {
+
+       var perfil = $("#Perfil").val();
+
+       if (perfil === "OPAIN" || perfil === "ADMINISTRADOR" || perfil === "EXTERNO" || perfil === "TECNOLOGIA") {
+            $("#divAerolinea").hide();
+            $("#Aerolinea").val("");
+       }
+        else
+       {
+
+           var aerolinea = '@ViewBag.Aerolinea';
+
+           $("#Aerolinea option").each(function () {
+
+               if ($(this).val().trim() == aerolinea) {
+                   console.log('into opc selected...');
+                   $(this).attr('selected', 'selected');
+                   $(this).change();
+               }
+
+           });
+
+            //$("#Aerolinea option[value='AVIANCA']").attr("selected", "selected");
+            $("#divAerolinea").show();
+
+       }
+    }
+
+    $.validator.addMethod(
+        "regex",
+        function(value, element, regexp) {
+            var re = new RegExp(regexp);
+            return this.optional(element) || re.test(value);
+        },
+        "Please check your input."
+);
+
+    $("#formUpdate").validate({
+	rules: {
+		Nombre: {
+			required: true
+		},
+		Apellido: {
+			required: true
+		},
+		TipoDocumento: {
+			required: true
+            },
+        NumeroDocumento: {
+            required: true,
+            regex: "^[a-zA-Z0-9'.\\s]{1,40}$"
+            },
+        Email: {
+			required: true
+            },
+         Telefono: {
+             required: true
+            },
+          Cargo: {
+			required: true
+		}
+	},
+	messages: {
+		Nombre: {
+			required: "El campo Nombre es obligatorio."
+        },
+        Apellido: {
+			required: "El campo Apellido es obligatorio."
+        },
+        TipoDocumento: {
+			required: "El campo Tipo de documento es obligatorio."
+        },
+        NumeroDocumento: {
+            required: "El campo Documento de identidad es obligatorio.",
+            regex: "No puede contener caracteres especiales"
+        },
+        Email: {
+			required: "El campo Correo electrónico es obligatorio."
+        },
+        Telefono: {
+			required: "El campo Telefono es obligatorio."
+        },
+        Cargo: {
+			required: "El campo Cargo es obligatorio."
+		}
+	},
+	highlight: function(element, errorClass) {
+		$(element).closest(".form-group").addClass("has-error");
+	},
+	unhighlight: function(element, errorClass) {
+		$(element).closest(".form-group").removeClass("has-error");
+	},
+	errorPlacement: function (error, element) {
+		error.appendTo(element.parent().next());
+	},
+	errorPlacement: function (error, element) {
+		if(element.attr("type") == "checkbox") {
+			element.closest(".form-group").children(0).prepend(error);
+		}
+		else
+			error.insertAfter(element);
+	}
+});
+</script>
