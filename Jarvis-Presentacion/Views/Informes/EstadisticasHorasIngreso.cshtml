@@ -1,0 +1,464 @@
+﻿
+@{
+    ViewData["Title"] = "Horas de ingreso";
+}
+
+<h1>Informes</h1>
+
+<div class="menu__informes">
+    <ul class="nav nav-tabs d-flex flex-wrap">
+        <li class="nav-item">
+            <a href="" class="nav-link">Infrasa</a>
+        </li>
+        <li class="nav-item">
+            <a href="" class="nav-link">
+                Cobro
+            </a>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Anexos
+            </a>
+            <div class="dropdown-menu">
+                <a href="" class="dropdown-item">Tasas</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">Parqueo</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">GPU</a>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">Fuentes</div>
+
+                <ul>
+                    <li>
+                        <a href="" class="dropdown-item">Aerocivil</a>
+                    </li>
+                    <li>
+                        <a href="" class="dropdown-item">Parqueo</a>
+                    </li>
+                    <li>
+                        <a href="" class="dropdown-item">Fuentes</a>
+                    </li>
+                    <li>
+                        <a href="" class="dropdown-item">GPU</a>
+                    </li>
+                </ul>
+
+
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Facturas
+            </a>
+            <div class="dropdown-menu">
+                <a href="" class="dropdown-item">Fiducia</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">Número de factura</a>
+                <div class="dropdown-divider"></div>
+                <a href="" class="dropdown-item">Pagar por <img src="~/images/logo-pse.png" alt="Pago por PSE" class="img-fluid" /></a>
+            </div>
+        </li>
+
+        <li class="nav-item dropdown">
+            <a href="" class="nav-link dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                Estadísticas
+            </a>
+            <div class="dropdown-menu">
+                <div class="dropdown-item">
+                    Actividad de usuarios
+                </div>
+                <ul>
+                    <li><a href="./estadisticasingresos" class="dropdown-item">Ingresos</a></li>
+                    <li><a href="./estadisticasCargueArchivos" class="dropdown-item">Cargue de archivos</a></li>
+                    <li><a href="./estadisticasHorasIngreso" class="dropdown-item">Horas de ingresos</a></li>
+                </ul>
+
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item">
+                    Actividad de aerolíneas
+                </div>
+                <ul>
+                    <li><a href="./estadisticasCantidadVuelos" class="dropdown-item">Cantidad de vuelos</a></li>
+                    <li><a href="./estadisticasCantidadPasajeros" class="dropdown-item">Cantidad de pasajeros</a></li>
+                    <li><a href="./estadisticasCantidadTransitos" class="dropdown-item">Cantidad de tránsitos</a></li>
+                    <li><a href="./estadisticasDestinos" class="dropdown-item">Destinos</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div class="sin__contenido mb-5">
+    <div class="bg--white">
+        <div class="row">
+            <div class="col-sm-3 pt-2">
+                Seleccione las fechas:
+            </div>
+            <div class="col-sm-9">
+                <form class="needs-validation" novalidate>
+                    <div class="form-inline float-right">
+                        <div class="form-group  search__date--width">
+                            <img src="~/images/novedad-calendario.png" alt="" />
+                            <input id="startDate" class="text-center" placeholder="Fecha inicial" aria-describedby="validationTooltipUsernamePrepend" required /> - <input id="endDate" class="text-center" placeholder="Fecha final" aria-describedby="validationTooltipUsernamePrepend" required />
+                            <div class="invalid-tooltip">
+                                Por favor escriba o seleccione una fecha valida
+                            </div>
+                            <button type="button" class="btn btn--border ml-2">Buscar</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <svg id="visualization"></svg>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<script>
+
+    var data1 = [{
+        "sale": "20",
+        "date": "2014-06-09"
+    }, {
+        "sale": "215",
+        "date": "2014-09-09"
+    }, {
+        "sale": "179",
+        "date": "2014-12-09"
+    }, {
+        "sale": "19",
+        "date": "2015-03-09"
+    }, {
+        "sale": "134",
+        "date": "2015-06-09"
+    }, {
+        "sale": "160",
+        "date": "2015-09-09"
+    }];
+
+
+    var FreshChart = function (selector, dataArray, options) {
+        // private properties
+        // --------------------------------------------------------------------------------
+        var defaultOptions = {
+            lineColor: "red",
+            width: 1000,
+            height: 500,
+            xKey: "x",
+            yKey: "y",
+            timeFormat: "%d-%b",
+            parseFormat: "%Y",
+            margins: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 50
+            }
+        },
+
+            // create a copy of the dataArray
+            // we must create a deep copy using jQuery extend method, meaning it will copy every object as well
+            // if we use the slice method, it will only create pointers to the original objects
+            initialData = $.extend(true, [], dataArray),
+
+            // merge default options with passed in options
+            options = $.extend({}, defaultOptions, options),
+
+            // the visualization container
+            // the chart is contained within the group element
+            vis = d3.select(selector)
+                .attr("width", options.width + options.margins.left + options.margins.right)
+                .attr("height", options.height + options.margins.top + options.margins.bottom)
+                .append("g")
+                .attr("transform", "translate(" + options.margins.left + "," + options.margins.top + ")"),
+
+            // append a group to the visualization container.
+            // the line will be appended to this group
+            lineSvg = vis.append("g"),
+
+            // focus is the circle and lines that appear when user mouses over visualization
+            // it starts off with display none
+            focus = vis.append("g")
+                .attr("class", "focus")
+                .style("display", "none");
+
+        // private methods
+        // --------------------------------------------------------------------------------
+
+        // d3.bisector method creates a bisector function
+        // the function allows us to find the index of the closest data point
+        // based on the x coordinates of the mouse.
+        // this function is used in the mousemove callback function
+        var bisectDate = d3.bisector(function (d) {
+            return d[options.xKey]
+        }).left,
+
+            // this gives us a function that formats a date object into a string
+            // we specify the format in the options hash.
+            // this is how the date shows up on the visualization tooltip
+            formatDate = d3.time.format(options.timeFormat),
+
+            // this gives us a function that parses a string into a date object
+            // we specify the format of the string as the parseFormat option
+            // this is the format of the dates that gets passed in.
+            parseDate = d3.time.format(options.parseFormat).parse,
+
+            // line generator function
+            // the line is generated by passing in a data set
+            // the line generator uses the scale functions
+            // to scale the data to fit within the container svg
+            lineGen = d3.svg.line()
+                .x(function (d) {
+                    return xScale(d[options.xKey]);
+                })
+                .y(function (d) {
+                    return yScale(d[options.yKey]);
+                })
+                .interpolate("cardinal"),
+
+            // x scale function. will scale your data set to be proportionate to
+            // the size of the svg width
+            xScale = d3.time.scale().range([0, options.width]),
+
+            // y scale function. will scale your data set to be proportionate to
+            // the size of the svg height
+            yScale = d3.scale.linear().range([options.height, 0]),
+
+            // generates the x axis based on the x scale when called
+            xAxis = d3.svg.axis()
+                .scale(xScale)
+                .tickFormat(d3.time.format("%b")),
+
+            // generates the y axis based on the y scale when called
+            yAxis = d3.svg.axis()
+                .scale(yScale)
+                .orient("left"),
+
+            bindRect = function (dataSet) {
+                var mousemove = function () {
+
+                    // this finds the data point that is closest to where
+                    // the users mouse is
+                    var x0 = xScale.invert(d3.mouse(this)[0]),
+                        i = bisectDate(dataSet, x0, 1),
+                        d0 = dataSet[i - 1],
+                        d1 = dataSet[i],
+                        d = x0 - d0.year > d1.year - x0 ? d1 : d0;
+
+                    // the following code moves the focus circle and lines to the right spot using the
+                    // transform attribute and changing the translate x and y properties
+                    focus.select("circle")
+                        .attr("transform", "translate(" + xScale(d[options.xKey]) + "," + yScale(d[options.yKey]) + ")");
+
+                    focus.select(".x")
+                        .attr("transform", "translate(" + xScale(d[options.xKey]) + "," + yScale(d[options.yKey]) + ")")
+                        .attr("y2", options.height - yScale(d[options.yKey]));
+
+                    focus.select(".y")
+                        .attr("transform", "translate(" + 0 + "," + yScale(d[options.yKey]) + ")")
+                        .attr("x2", options.width);
+
+                    focus.select("text.y1")
+                        .attr("transform", "translate(" + xScale(d[options.xKey]) + "," + yScale(d[options.yKey]) + ")")
+                        .text(formatDate(d[options.xKey]));
+
+                    focus.select("text.y2")
+                        .attr("transform", "translate(" + xScale(d[options.xKey]) + "," + yScale(d[options.yKey]) + ")")
+                        .text(formatDate(d[options.xKey]));
+
+                    focus.select("text.y3")
+                        .attr("transform", "translate(" + xScale(d[options.xKey]) + "," + yScale(d[options.yKey]) + ")")
+                        .text(d[options.yKey]);
+
+                    focus.select("text.y4")
+                        .attr("transform", "translate(" + xScale(d[options.xKey]) + "," + yScale(d[options.yKey]) + ")")
+                        .text(d[options.yKey]);
+                }
+
+                // append the transparent rectangle that captures the mouse events
+                vis.append("rect")
+                    .attr("class", "overlay")
+                    .attr("width", options.width)
+                    .attr("height", options.height)
+                    .on("mouseover", function () {
+                        focus.style("display", null);
+                    })
+                    .on("mouseout", function () {
+                        focus.style("display", "none")
+                    })
+                    .on("mousemove", mousemove);
+            };
+
+        // public methods
+        // --------------------------------------------------------------------------------
+
+        // initialize the chart
+        this.init = function () {
+
+            // parse the dates from a string into a date object
+            initialData.forEach(function (d) {
+                d[options.xKey] = parseDate(d[options.xKey]);
+            });
+
+            // set the domain of the x scale. in other words, the min and max of the x
+            // d3.extent returns the min and max in an array
+            xScale.domain(d3.extent(initialData, function (d) {
+                return d[options.xKey]
+            }));
+
+            // set the domain of the y scale. the min and max of the y scale. we hardcode the min to 0.
+            yScale.domain([0, d3.max(initialData, function (d) {
+                return d[options.yKey]
+            })]);
+
+            // append the x and y axis within their own groups
+            vis.append("svg:g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + (options.height) + ")")
+                .call(xAxis);
+
+            vis.append("svg:g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(0,0)")
+                .call(yAxis);
+
+            // append the path to the line group
+            lineSvg.append('path')
+                .transition()
+                .attr('d', lineGen(initialData))
+                .attr('stroke', options.lineColor)
+                .attr('stroke-width', 2)
+                .attr('fill', 'none')
+                .attr('class', 'line');
+
+            // append the circle
+            focus.append("circle")
+                .attr("r", 4.5);
+
+            // place the value at the intersection
+            // white stroke and text
+            focus.append("text")
+                .attr("class", "y1")
+                .style("stroke", "white")
+                .style("stroke-width", "3.5px")
+                .style("opacity", 0.8)
+                .attr("dx", 8)
+                .attr("dy", "-.3em");
+            focus.append("text")
+                .attr("class", "y2")
+                .attr("dx", 8)
+                .attr("dy", "-.3em");
+
+            // place the date at the intersection
+            // this is the white stroke around the text and the text
+            focus.append("text")
+                .attr("class", "y3")
+                .style("stroke", "white")
+                .style("stroke-width", "3.5px")
+                .style("opacity", 0.8)
+                .attr("dx", 8)
+                .attr("dy", "1em");
+            focus.append("text")
+                .attr("class", "y4")
+                .attr("dx", 8)
+                .attr("dy", "1em");
+
+            // append the x focus line
+            focus.append("line")
+                .attr("class", "x")
+                .style("stroke", "red")
+                .style("stroke-dasharray", "3.3")
+                .style("opacity", 0.5)
+                .attr("y1", 0)
+                .attr("y2", options.height);
+
+            // append the y focus line
+            focus.append("line")
+                .attr("class", "y")
+                .style("stroke", "blue")
+                .style("stroke-dasharray", "3.3")
+                .style("opacity", 0.5)
+                .attr("x1", 0)
+                .attr("x2", options.width - options.margins.right);
+
+            // create and bind the rectangle and set up the mouse event handlers
+            bindRect(initialData);
+        };
+
+        // this method takes a dataSet and regenerates the visualization
+        this.updateData = function (dataSet) {
+
+            // create a deep copy using jQuery extend so we don't mutate the original data
+            var dataCopy = $.extend(true, [], dataSet);
+
+            dataCopy.forEach(function (d) {
+                d[options.xKey] = parseDate(d[options.xKey]);
+            });
+
+            // set the new domain for x and y scale
+            xScale.domain(d3.extent(dataCopy, function (d) {
+                return d[options.xKey]
+            }));
+
+            yScale.domain([0, d3.max(dataCopy, function (d) {
+                return d[options.yKey]
+            })]);
+
+            // transition and bind new data
+            var svg = d3.select(selector).transition();
+
+            svg.select(".line")
+                .transition()
+                .attr("d", lineGen(dataCopy));
+
+            svg.select("rect").remove();
+
+            bindRect(dataCopy);
+
+            svg.select(".x.axis")
+                .duration(750)
+                .call(xAxis);
+
+            svg.select(".y.axis")
+                .duration(750)
+                .call(yAxis);
+        };
+    }
+
+    // instantiate and call the FreshChart class
+    var fc = new FreshChart('#visualization', data1, {
+        lineColor: "#FFC844",
+        width: 800,
+        height: 400,
+        xKey: "date",
+        yKey: "sale",
+        timeFormat: "%b-%d",
+        parseFormat: "%Y-%m-%d"
+    });
+
+    fc.init();
+
+    function updateChart(i) {
+        switch (i) {
+            case 1:
+                fc.updateData(data1);
+                break;
+            case 2:
+                fc.updateData(data2);
+                break;
+            case 3:
+                fc.updateData(data3);
+                break;
+            default:
+        }
+    }
+</script>

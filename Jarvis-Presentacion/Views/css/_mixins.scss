@@ -1,0 +1,95 @@
+﻿@import '_varibles.scss';
+
+@mixin fontlight {
+    /*font-family: 'GriffithGothicThinRegular', Arial, Helvetica, sans-serif;*/
+    font-family: 'griffith-gothic', Arial, Helvetica, sans-serif;
+    font-weight: 100;
+}
+
+@mixin fontnormal {
+    /*font-family: 'GriffithGothicLight', Arial, Helvetica, sans-serif;*/
+    font-family: 'griffith-gothic', Arial, Helvetica, sans-serif;
+    font-weight: 400;
+}
+
+@mixin fontmedium {
+    /*font-family: 'GriffithGothicLight', Arial, Helvetica, sans-serif;*/
+    font-family: 'griffith-gothic', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+}
+
+@mixin fontbold {
+    /*font-family: 'GriffithGothicBold', Arial, Helvetica, sans-serif;*/
+    font-family: 'griffith-gothic', Arial, Helvetica, sans-serif;
+    font-weight: 800;
+}
+
+@mixin border-radius() {
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+@mixin set-border-radius($set-border-radius) {
+    border-radius: $set-border-radius;
+    -webkit-border-radius: $set-border-radius;
+    -moz-border-radius: $set-border-radius;
+}
+
+@mixin gradient {
+    background: #ffca4f; /* Old browsers */
+    background: -moz-linear-gradient(left, #ffca4f 0%, #ffb400 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, #ffca4f 0%,#ffb400 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right, #ffca4f 0%,#ffb400 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffca4f', endColorstr='#ffb400',GradientType=1 ); /* IE6-9 */
+}
+
+@mixin box-shadow {
+    -webkit-box-shadow: 3px 80px 17px 0px rgba(0,0,0,0.61);
+    -moz-box-shadow: 3px 80px 17px 0px rgba(0,0,0,0.61);
+    box-shadow: 3px 80px 17px 0px rgba(0,0,0,0.61);
+}
+@mixin box-shadow2 {
+    -webkit-box-shadow: 3px -2px 17px 0px rgba(0,0,0,0.61);
+    -moz-box-shadow: 3px -2px 17px 0px rgba(0,0,0,0.61);
+    box-shadow: 3px -2px 17px 0px rgba(0,0,0,0.61);
+}
+@mixin box-shadow-inset {
+    -webkit-box-shadow: inset 0px 0px 0px 4px $gray;
+    -moz-box-shadow: inset 0px 0px 0px 4px $gray;
+    box-shadow: inset 0px 0px 0px 4px $gray;
+}
+
+@mixin box-shadow-inset-set($set-shadow) {
+    -webkit-box-shadow: $set-shadow;
+    -moz-box-shadow: $set-shadow;
+    box-shadow: $set-shadow;
+}
+
+@mixin no-box-shadow {
+    -webkit-box-shadow: 0 0 0 0 rgba(0,0,0,0);
+    -moz-box-shadow: 0 0 0 0 rgba(0,0,0,0);
+    box-shadow: 0 0 0 0 rgba(0,0,0,0);
+}
+
+@mixin transition() {
+    -webkit-transition: all ease 0.3s;
+    -moz-transition: all ease 0.3s;
+    transition: all 0.3s ease;
+}
+
+@mixin transform($transform) {
+    -webkit-transform: $transform; /* Safari, Chrome */
+    -moz-transform: $transform; /* Firefox 3.5~16.0 */
+    -ms-transform: $transform; /* IE9~10 */
+    -o-transform: $transform; /* Opera 10.5~12.10 */
+    transform: $transform;
+}
+
+@mixin transform-origin($origin) {
+    -webkit-transform-origin: $origin;
+    -moz-transform-origin: $origin; /* Firefox 3.5~16.0 */
+    -ms-transform-origin: $origin; /* IE9~10 */
+    -o-transform-origin: $origin; /* Opera 10.5~12.10 */
+    transform-origin: $origin;
+}

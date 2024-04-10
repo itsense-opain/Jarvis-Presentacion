@@ -1,0 +1,8 @@
+﻿@page
+@model LogoutModel
+
+    <header>
+        <h1>Cerrar sesión</h1>
+        <p>Ha cerrado sesión satisfactoriamente</p>
+        <a asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action(" Index", "Home" , new { area="" })" style="color:white">Iniciar sesión</a>
+    </header>

@@ -1,0 +1,97 @@
+﻿<h1>
+    ACTUALIZAR EXENTO
+</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <input type="hidden" name="operacionPasajero" id="operacionPasajero" value="@ViewData["operacion"]" />
+            <input type="hidden" name="idPasajero" id="idPasajero" value="@ViewData["id"]" />
+            <div class="form-group col-6">
+                <label for="fechaPasajero" class="control-label">Fecha</label>
+                <input id="fechaPasajero" name="fechaPasajero" class="form-control" type="date" value="@ViewData["fecha"]" />
+            </div>
+            <div class="form-group col-6">
+                <label for="numeroVuelo" class="control-label">Número de Vuelo</label>
+                <input id="numeroVuelo" name="numeroVuelo" class="form-control" type="text" value="@ViewData["vuelo"]" />
+            </div>
+            <div class="form-group col-6">
+                <label for="matriculaVuelo" class="control-label">Matrícula del Vuelo</label>
+                <input id="matriculaVuelo" name="matriculaVuelo" class="form-control" type="text" value="@ViewData["matricula"]" />
+            </div>
+            <div class="form-group col-6">
+                <label for="nombrePasajero" class="control-label">Nombre del Pasajero</label>
+                <input id="nombrePasajero" name="nombrePasajero" class="form-control" type="text" value="@ViewData["nombre"]" />
+            </div>
+            <div class="form-group col-6">
+                <label for="categoria" class="control-label">categoría</label>
+                <select id="categoria" name="categoria" class="form-control">
+                    @Html.Raw(@ViewData["categoria"])
+                </select>
+            </div>
+            @*<div id="dvRealViaje" class="form-group col-6">
+                <label for="nombrePasajero" class="control-label">Realiza Viaje?</label>
+                <select id="ddlRealViaje" name="ddlRealViaje" class="form-control">
+                    @Html.Raw(@ViewData["realiza_viaje"])
+                </select>
+            </div>
+            <div id="dvMotivoEx" class="form-group col-6">
+                <label for="txtMotivoEx" class="control-label">Motivo de no viaje</label>
+                <input id="txtMotivoEx" name="txtMotivoEx" class="form-control" type="text" value="@ViewData["motivo_exencion"]" />
+            </div>*@
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn--default--grey" id="btnVolver">Volver</button>
+            </div>
+            <div class="form-group col-4">
+                <button type="button" class="btn btn--default" onclick="ActualizarExentoPost(@ViewData["operacion"]);">Actualizar Exento</button>
+            </div>            
+        </div>
+        <hr>
+        </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#dvRealViaje").hide();
+        $("#dvMotivoEx").hide();
+
+        if ($("#categoria").val() == "EX") {
+            $("#dvRealViaje").show();
+            if ($("#ddlRealViaje").val() == "0") {
+                $("#dvMotivoEx").show();
+            } else {
+                $("#dvMotivoEx").hide();
+            }
+        }
+
+        $("#categoria").on("change", function () {
+
+            if ($(this).val() == "EX") {
+                $("#dvRealViaje").show();
+                $("#ddlRealViaje").change();
+            } else {
+                $("#dvRealViaje").hide();
+                $("#dvMotivoEx").hide();
+            }
+        });
+
+        $("#ddlRealViaje").on("change", function () {
+            if ($(this).val() == "0") {
+                $("#dvMotivoEx").show();
+            } else {
+                $("#dvMotivoEx").hide();
+            }
+        });
+
+        var id = $("#Id").val();
+
+        $("#btnVolver").on("click", function () {
+            $("#divCargarEX").empty();
+            $("#divCargarEX").load("/CargaInformacion/Pasajeros/Principal?idOperacion=" + id + "&acciones=" + 2)            
+        });
+    });
+</script>

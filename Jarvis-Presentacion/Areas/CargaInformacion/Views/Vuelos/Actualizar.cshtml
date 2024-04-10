@@ -1,0 +1,317 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.OperacionVueloOtd
+
+        <h1>Actualizar Vuelo</h1>
+
+        <div class="alert alert-warning alert-dismissible fade show row" id="advertenciaUpd" role="alert">
+            <p class="text-center mb-0"></p>
+            <button type="button" class="close" id="btnClose" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <form asp-action="Actualizar" id="formActualizarVuelo">
+
+
+                    <fieldset>
+                        <legend>Seleccione el reporte a generar: </legend>
+                        <p id="output"></p>
+                        <div>
+                            <img src="~/images/pdf.png" alt="Descargar PDF" />
+                            <input type="radio" id="pdf" name="pdfyTxt" value="pdf" checked>
+                            <label for="pdf">PDF</label>
+
+                            <img src="~/images/txt.png" alt="Descargar TXT" />
+                            <input type="radio" id="txt" name="pdfyTxt" value="txt">
+                            <label for="txt">TXT</label>
+                        </div>
+                    </fieldset>
+                    <br /><br />
+
+                    <div asp-validation-summary="ModelOnly" class="tool__valide"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="IdAerolinea" />
+                    <input type="hidden" asp-for="NombreAerolinea" />
+                    <input type="hidden" asp-for="ConfirmacionPasajeros" />
+                    <input type="hidden" asp-for="ConfirmacionTransitos" />
+                    <input type="hidden" asp-for="ConfirmacionGenDec" />
+                    <input type="hidden" asp-for="ConfirmacionManifiesto" />
+                    <input type="hidden" asp-for="ConfirmacionOperacion" />
+                    <input type="hidden" asp-for="IdConsecutivoCargue" />
+                    <input type="hidden" asp-for="EstadoProceso" />
+                    <input type="hidden" asp-for="IdVuelo" />
+                    <input type="hidden" asp-for="PAX" />
+                    <input type="hidden" asp-for="Id_Daily" />
+                    <input type="hidden" asp-for="tasasReportadas" />
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label asp-for="Vuelo" class="control-label"></label>
+                            <input asp-for="Vuelo" class="form-control" />
+                            <span asp-validation-for="Vuelo" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="Matricula" class="control-label"></label>
+                            <input asp-for="Matricula" class="form-control" />
+                            <span asp-validation-for="Matricula" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label asp-for="Tipo" class="control-label"></label>
+                            @*<input asp-for="Tipo" class="form-control" />*@
+                            <select asp-for="Tipo" id="Tipo" class="form-control txtVal">
+                                <option value="INT">Internacional</option>
+                                <option value="DOM">Nacional</option>
+                            </select>
+                            <span asp-validation-for="Tipo" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="Destino" class="control-label"></label>
+                            <input asp-for="Destino" class="form-control" />
+                            <span asp-validation-for="Destino" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label asp-for="Fecha" class="control-label"></label>
+                            <input asp-for="Fecha" type="date" min="1900-12-31" max="2100-12-31" id="UpdFecha" class="form-control" />
+                            <span asp-validation-for="Fecha" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="Hora" class="control-label"></label>
+                            <input asp-for="Hora" type="text" readonly id="UpdHora" class="form-control" />
+                            <span asp-validation-for="Hora" class="tool__valide"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label asp-for="TotalEmbarcados" class="control-label"></label>
+                            <input asp-for="TotalEmbarcados" id="UpdTotalEmbarcados" class="form-control txtVal" />
+                            <span asp-validation-for="TotalEmbarcados" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="INF" class="control-label"></label>
+                            <input asp-for="INF" id="UpdINF" class="form-control txtVal" />
+                            <span asp-validation-for="INF" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label asp-for="TTL" class="control-label"></label>
+                            <input asp-for="TTL" id="UpdTTL" class="form-control txtVal" />
+                            <span asp-validation-for="TTL" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="TTC" class="control-label"></label>
+                            <input asp-for="TTC" id="UpdTTC" class="form-control txtVal" />
+                            <span asp-validation-for="TTC" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <label asp-for="EX" class="control-label">
+                                Exentos
+                            </label>
+                            <div>
+                                <input asp-for="EX" id="UpdEX" class="col-8 txtVal" />
+                                <button type="button" id="lblEX" class="btn btn--border float-right">
+                                    <img src="~/images/buscar.png" alt="Cerrar" class="img-fluid" /> Mostrar detalles
+                                </button>
+                            </div>
+
+                            <span asp-validation-for="EX" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="TRIP" class="control-label"></label>
+                            <input asp-for="TRIP" id="UpdTRIP" class="form-control txtVal" />
+                            <span asp-validation-for="TRIP" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="form-group col-6">
+                            <label asp-for="PagoUSD" class="control-label"></label>
+                            <input asp-for="PagoUSD" id="UpdPagoUSD" class="form-control txtVal" />
+                            <span asp-validation-for="PagoUSD" class="tool__valide"></span>
+                        </div>
+                        <div class="form-group col-6">
+                            <label asp-for="PagoCOP" class="control-label font--bold"></label>
+                            <input asp-for="PagoCOP" id="UpdPagoCOP" readonly class="form-control txtVal input__disabled" />
+                            <span asp-validation-for="PagoCOP" class="tool__valide"></span>
+                        </div>
+                    </div>
+                    <div class="divCargarEXAll">
+                        <div class="">
+                            <hr />
+                            <div id="divCargarEX"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                        </div>
+                        <div class="form-group col-6">
+                            <input type="button" value="Actualizar" id="btnActualizarVuelo" class="btn btn--default btn-block" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            const radioButtons = document.querySelectorAll('input[name="pdfyTxt"]');
+
+            function PdfyTxt(radioButtons) {
+                for (const radioButton of radioButtons) {
+                    if (radioButton.checked) {
+                        nombreradioboton = radioButton.value;
+                        break;
+                    }
+                }
+
+                output.innerText = nombreradioboton ? `Usted Generará reporte  Con: ${nombreradioboton}` : `Usted no ha selecionado Nada`;
+            }
+
+            $(".divCargarEXAll").hide();
+
+            var $UpdEXIni = $("#UpdEX").val();
+
+            $("#lblEX").on("click", function () {
+
+                var id = $("#Id").val();
+
+                $(".divCargarEXAll").toggle(function () {
+
+                    $("#UpdEX").toggleClass("input__disabled");
+
+                    var $UpdEX = $("#UpdEX");
+
+                    $("#divCargarEX").empty();
+                    $("#divMensaje").empty();
+
+                    if ($UpdEX.hasClass("input__disabled")) {
+                        $UpdEX.attr('readonly', true);
+                        $("#divCargarEX").load("/CargaInformacion/Pasajeros/Principal?idOperacion=" + id + "&acciones=" + 2);
+                        setTimeout(function () {
+                            var $ex = $("#divCargarEX").find(".imgEditarEx").toArray().length;
+                            //console.log("Hay " + $ex + " exentos");
+                            //$("#UpdEX").val($ex);
+                        }, 1000);
+                    } else {
+                        $UpdEX.attr('readonly', false);
+                        $("#UpdEX").val($UpdEXIni);
+                    }
+
+                });
+            });
+
+            $("#UpdHora").timepicker({
+                'timeFormat': 'H:i:s'
+            });
+
+            $("#UpdHora").on("click", function () {
+                console.log("into click input timepicker...");
+                $(this).parent().find(".gj-icon").trigger('click');
+            });
+
+            $("#advertenciaUpd").hide();
+
+            calculos();
+
+            $(".txtVal").on("change", function () {
+                var vlr = ($(this).val() == '' ? 0 : $(this).val());
+
+                if (vlr < 0) {
+                    $(this).val("");
+                    $(this).focus();
+                }
+                calculos($(this).val());
+            });
+
+            $("#tipo").on("change", function () {
+                calculos();
+            });
+            $("#btnActualizarVuelo").click(function () {
+
+
+                var TotalEmbarcados = $("#UpdTotalEmbarcados").val();
+                var INF = ($("#UpdINF").val() == '' ? 0 : $("#UpdINF").val());
+                var TTL = ($("#UpdTTL").val() == '' ? 0 : $("#UpdTTL").val());
+                var TTC = ($("#UpdTTC").val() == '' ? 0 : $("#UpdTTC").val());
+                var EX = ($("#UpdEX").val() == '' ? 0 : $("#UpdEX").val());
+                var TRIP = ($("#UpdTRIP").val() == '' ? 0 : $("#UpdTRIP").val());
+                var PagoCOP = ($("#UpdPagoCOP").val() == '' ? 0 : $("#UpdPagoCOP").val());
+                var PagoUSD = ($("#UpdPagoUSD").val() == '' ? 0 : $("#UpdPagoUSD").val());
+                var tipo = $("#Tipo").val();
+
+                if (tipo == 'INT') {
+
+                    var ttalValores = parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD) + parseInt(PagoCOP);
+                    var restaValores = parseInt(TotalEmbarcados) - parseInt(ttalValores);
+                } else if (tipo == 'DOM') {
+
+                    var ttalValores = parseInt(INF) + parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD) + parseInt(PagoCOP);
+                    var restaValores = parseInt(TotalEmbarcados) - parseInt(ttalValores);
+                }
+                var parrafo = $("#advertenciaUpd").find("p");
+                if (restaValores != 0) {
+
+                    parrafo.text("La cantidad de pasajeros no coinciden con los valores ingresados");
+                    $("#advertenciaUpd").show();
+                } else if (parseInt(PagoCOP) < 0) {
+                    parrafo.text('El campo "Pago en COP" debe ser mayor a cero para continuar');
+                    $("#advertenciaUpd").show();
+                } else {
+                    $("#formActualizarVuelo").submit();
+                }
+                
+            });
+
+            $("#formActualizarVuelo").on("submit", function (eventObj) {
+                var url = new URL(window.location.href);
+                var numeroVuelo = url.searchParams.get("numeroVuelo") != null ? url.searchParams.get("numeroVuelo"): "";
+                var fechaInicio = url.searchParams.get("fechaInicio") != null ? url.searchParams.get("fechaInicio") : "";
+                var fechaFinal = url.searchParams.get("fechaFinal") != null ? url.searchParams.get("fechaFinal") : "";
+                $(this).append('<input type="hidden" id="numeroVuelo" name="numeroVuelo" value="' + numeroVuelo + '" />');
+                $(this).append('<input type="hidden" id="fechaInicio" name="fechaInicio" value="' + fechaInicio + '" />');
+                $(this).append('<input type="hidden" id="fechaFinal" name="fechaFinal" value="' + fechaFinal + '" />');
+                return true;
+            });
+
+            $("#btnClose").on("click", function () {
+                $("#advertenciaUpd").hide();
+            });
+
+            function calculos() {
+                var INF = ($("#UpdINF").val() == '' ? 0 : $("#UpdINF").val());
+                var TTL = ($("#UpdTTL").val() == '' ? 0 : $("#UpdTTL").val());
+                var TTC = ($("#UpdTTC").val() == '' ? 0 : $("#UpdTTC").val());
+                var EX = ($("#UpdEX").val() == '' ? 0 : $("#UpdEX").val());
+                var TRIP = ($("#UpdTRIP").val() == '' ? 0 : $("#UpdTRIP").val());
+                var PagoUSD = ($("#UpdPagoUSD").val() == '' ? 0 : $("#UpdPagoUSD").val());
+                //var PagoCOP = ($("#UpdPagoCOP").val() == '' ? 0 : $("#UpdPagoCOP").val());
+                var tipo = $("#Tipo").val();
+                var TotalEmbarcados = $("#UpdTotalEmbarcados").val();
+
+                var ttalSinPagoCOP = 0;
+                var valorPagoCOPNew = 0;
+
+                if (tipo == 'INT') {
+                    ttalSinPagoCOP = parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD);
+                    valorPagoCOPNew = parseInt(TotalEmbarcados) - parseInt(ttalSinPagoCOP);
+                } else if (tipo == 'DOM') {
+                    ttalSinPagoCOP = parseInt(INF) + parseInt(TTL) + parseInt(TTC) + parseInt(EX) + parseInt(TRIP) + parseInt(PagoUSD);
+                    valorPagoCOPNew = parseInt(TotalEmbarcados) - parseInt(ttalSinPagoCOP);
+                }
+                $("#UpdPagoCOP").val(valorPagoCOPNew);
+            }
+        });
+    </script>

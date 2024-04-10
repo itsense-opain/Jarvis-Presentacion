@@ -1,0 +1,1121 @@
+﻿@model dynamic
+
+
+
+@{
+    ViewData["Title"] = "Validación Manual";
+}
+<h1>Validación manual</h1>
+
+<style>
+    .warnings {
+        border: solid red 1px !important;
+        box-shadow: 2px 2px 4px #adaaaa;
+    }
+
+    .warning {
+        border: solid #eaeaea 1px !important;
+        box-shadow: 2px 2px 4px #adaaaa;
+    }
+
+    .hiddenForms {
+        float: left;
+        visibility: hidden;
+        position: fixed;
+    }
+
+    warning {
+        border-color: darkgrey;
+        visibility: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: var(--black);
+        cursor: pointer;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.35s ease-in;
+    }
+
+    .warning-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .warning-dialog > * {
+        padding: 1rem;
+        border-color: darkgrey;
+    }
+
+    .warning-header,
+    .warning-footer {
+        background: var(--lightgray);
+    }
+</style>
+
+<div class="warning" id="modal-warning">
+    <div class="warning-dialog">
+        <div class="warning-header">
+            Mensaje de confirmación de operación
+            <button onclick="CloseSuspend();" class="close-modal" aria-label="close modal">✕</button>
+        </div>
+        <section id="warning-content" class="warning-content">
+            <h2>Suspensión de operación de vuelo</h2>
+            <p id="p-warning-content">¿Esta seguro que desea realizar la suspensión del la operación de vuelo seleccionada?.</p>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <input type="button" id="btnVolverWarning" onclick="CloseSuspend();"
+                           class="btn btn--default--grey btn-block pt-0 pb-0" value="Volver">
+                </div>
+                <div class="col-md-6">
+                    <input type="button" id="btnActionSuspend" onclick="ActionSuspend();"
+                           class="btn btn--default btn-block pt-0 pb-0" value="Aplicar">
+                </div>
+            </div>
+        </section>
+        <footer class="warning-footer">Para más información por favor haz clic <a href="#">aquí</a></footer>
+    </div>
+    <script>
+        function ActionSuspend() {
+            $("#p-warning-content").text("Un momento por favor...");
+            $.ajax({
+                type: 'GET',
+                url: "/CargaInformacion/Vuelos/Suspender?ID=@ViewBag.Id",
+                success: function (data) {
+                    if (data == true) {
+                        $("#p-warning-content").text("La suspensión fue aplicada con exito. En un momento lo regresaremos a la pantalla de consulta.");
+                        setTimeout(function () {
+                            window.location.assign("/CargaInformacion/Vuelos/Principal?fechaInicio=@ViewBag.fechainicial&fechaFinal=@ViewBag.fechafinal");
+                        }, 500);
+                    } else {
+                        $("#p-warning-content").text("La suspensión NO pudo ser aplicada.");
+                        setTimeout(function () {
+                            CloseSuspend();
+                        }, 1000);
+                    }
+                },
+                error: function (data) {
+                    console.log(data);
+                    $("#p-warning-content").text("El límite de suspensiones ha sido superado, lo sentimos.");
+                }
+            })
+            //window.location.assign("/CargaInformacion/Vuelos/Suspender?ID=@ViewBag.Id");
+        }
+    </script>
+</div>
+
+<div id="BodyMaster">
+    <div class="bg--white mb-2 text-center">
+
+
+        <div class="row">
+            <div class="col-sm-3 mb-2">
+                <strong>Aerolínea:</strong><br />
+                @ViewBag.NombreAerolinea
+            </div>
+
+            <div class="col-sm-3 mb-2">
+                <strong>Tipo:</strong><br />
+                @ViewBag.Tipo
+            </div>
+
+            <div class="col-sm-3 mb-2">
+                <strong>Matrícula:</strong><br />
+                @ViewBag.Matricula
+            </div>
+
+            <div class="col-sm-3 mb-2">
+                <strong>Número de vuelo:</strong><br />
+                @ViewBag.Vuelo
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-sm-3">
+                <strong>Fecha de vuelo:</strong><br />
+                @ViewBag.Fecha
+            </div>
+
+            <div class="col-sm-3">
+                <strong>Hora de vuelo:</strong><br />
+                @ViewBag.Hora
+            </div>
+
+            <div class="col-sm-3">
+                <strong>Destino:</strong><br />
+                @ViewBag.Destino
+            </div>
+        </div>
+    </div>
+
+    <form id="formValidaManual" asp-action="InsertValidacionManual" asp-controller="Vuelos" asp-area="CargaInformacion" class="mb-4">
+        <div id="dvCamposValidar" class="bg--white mb-2">
+            <input type="hidden" id="idVuelo" name="idVuelo" value="@ViewBag.Id">
+            <input type="hidden" id="fechaInicio" name="fechaInicio" value="@ViewBag.fechainicial">
+            <input type="hidden" id="fechaFinal" name="fechaFinal" value="@ViewBag.fechafinal">
+            <div>
+                <table class="table dataTable no-footer validacion--width">
+                    <thead>
+                        <tr>
+                            <th>
+                                Cantidad de<br /> pasajeros
+                                @ViewBag.CantPasajeros <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadPasajeros">0</p> = <p id="CalculadoPasajeros">@ViewBag.CantPasajeros</p>
+
+                                    <input type="hidden" id="CantPasajeros_Old" name="CantPasajeros_Old" value="@ViewBag.CantPasajeros">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad de<br /> tr&aacute;nsitos
+                                @ViewBag.CantTransitos <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadTransitos">0</p> = <p id="CalculadoTransitos">@ViewBag.CantTransitos</p>
+
+                                    <input type="hidden" id="CantTransitos_Old" name="CantTransitos_Old" value="@ViewBag.CantTransitos">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad de<br /> infantes
+                                @ViewBag.CantInfantes <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadInfantes">0</p> = <p id="CalculadoInfantes">@ViewBag.CantInfantes</p>
+
+                                    <input type="hidden" id="CantInfantes_Old" name="CantInfantes_Old" value="@ViewBag.CantInfantes">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad<br /> TTL
+                                @ViewBag.CantTTL <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadTTL">0</p> = <p id="CalculadoTTL">@ViewBag.CantTTL</p>
+
+                                    <input type="hidden" id="CantTTL_Old" name="CantTTL_Old" value="@ViewBag.CantTTL">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad<br /> TTC
+                                @ViewBag.CantTTC <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadTTC">0</p> = <p id="CalculadoTTC">@ViewBag.CantTTC </p>
+
+                                    <input type="hidden" id="CantTTC_Old" name="CantTTC_Old" value="@ViewBag.CantTTC">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad<br /> EX
+                                @ViewBag.CantEX  <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadEX">0</p> = <p id="CalculadoEX">@ViewBag.CantEX</p>
+
+                                    <input type="hidden" id="CantEX_Old" name="CantEX_Old" value="@ViewBag.CantEX">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad<br /> TRIP
+                                @ViewBag.CantTRIP <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadTRIP">0</p> = <p id="CalculadoTRIP">@ViewBag.CantTRIP</p>
+
+                                    <input type="hidden" id="CantTRIP_Old" name="CantTRIP_Old" value="@ViewBag.CantTRIP ">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad de<br /> pago en COP
+                                @ViewBag.PagoCOP <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadPagoCOP">0</p> = <p id="CalculadoPagoCOP">@ViewBag.PagoCOP</p>
+
+                                    <input type="hidden" id="CantPagoCOP_Old" name="CantPagoCOP_Old" value="@ViewBag.PagoCOP">
+                                </div>
+                            </th>
+                            <th>
+                                Cantidad de<br /> pago en USD
+                                @ViewBag.PagoUSD <div class="hiddenForms">
+                                    -
+                                    <p id="RestarCantidadPagoUSD">0</p> = <p id="CalculadoPagoUSD">@ViewBag.PagoUSD </p>
+                                    <input type="hidden" id="CantPagoUSD_Old" name="CantPagoUSD_Old" value="@ViewBag.PagoUSD">
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tr>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantPasajeros_New" name="CantPasajeros_New" maxlength="3" min="@ViewBag.CantPasajeros">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantTransitos_New" name="CantTransitos_New" maxlength="3">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantInfantes_New" name="CantInfantes_New" maxlength="3">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantTTL_New" name="CantTTL_New" maxlength="3" min="0" max="@ViewBag.CantTTL">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantTTC_New" name="CantTTC_New" maxlength="3" min="0" max="@ViewBag.CantTTC">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantEX_New" name="CantEX_New" maxlength="3">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantTRIP_New" name="CantTRIP_New" maxlength="3">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantPagoCOP_New" name="CantPagoCOP_New" maxlength="3">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control txt " id="CantPagoUSD_New" name="CantPagoUSD_New" maxlength="3">
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            <select class="form-control ddl" name="CausalPasajeros" id="CausalPasajeros">
+
+                                @Html.Raw(ViewBag.causalesTipo1)
+
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalTransitos" id="CausalTransitos">
+                                @Html.Raw(ViewBag.causalesTipo2)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalInfantes" id="CausalInfantes">
+                                @Html.Raw(ViewBag.causalesTipo3)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalTTL" id="CausalTTL">
+                                @Html.Raw(ViewBag.causalesTipo4)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalTTC" id="CausalTTC">
+                                @Html.Raw(ViewBag.causalesTipo5)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalEX" id="CausalEX">
+                                @Html.Raw(ViewBag.causalesTipo1)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalTRIP" id="CausalTRIP">
+                                @Html.Raw(ViewBag.causalesTipo2)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalPagoCOP" id="CausalPagoCOP">
+                                @Html.Raw(ViewBag.causalesTipo3)
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control ddl" name="CausalPagoUSD" id="CausalPagoUSD">
+                                @Html.Raw(ViewBag.causalesTipo3)
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+
+        <div class="bg--white  mb-4">
+            <h2>
+                Para ver los soportes de vuelo por favor seleccione una opción
+            </h2>
+            <hr />
+            <div class="menu__informes mb-5">
+                <ul class="nav nav-tabs d-flex flex-wrap justify-content-center">
+
+
+                    <li class="nav-item">
+                        @if (ViewBag.PDFPasajeros == 1)
+                        {
+                            <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo('PASAJEROS','@ViewBag.NombreArchivoPDFPasajero', 1);">
+                                Ver archivo de pasajeros
+                                <span class="arrow-tab"></span>
+                            </a>
+                        }
+                        else if (ViewBag.PDFPasajeros == 2)
+                        {
+                            <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo2('PASAJEROS','@ViewBag.NombreArchivoPDFPasajero', @ViewBag.Id);">
+                                Ver archivo de pasajeros
+                                <span class="arrow-tab"></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="VerListado(@ViewBag.Id,'PASAJEROS',1);">
+                                Ver listado de pasajeros
+                                <span class="arrow-tab"></span>
+                            </a>
+                        }
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="VerListado(@ViewBag.Id, 'TRANSITOS', 1);">
+                            Ver archivo de tr&aacute;nsitos
+                            <span class="arrow-tab"></span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo('NA', '@ViewBag.nomManifiesto');">
+                            Ver manifiesto
+                            <span class="arrow-tab"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo('NA', '@ViewBag.nomGenDec');">
+                            Ver GenDec
+                            <span class="arrow-tab"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" data-target="#accionesVuelo" onclick="Suspend('@ViewBag.Id');">
+                            Suspender el vuelo
+                            <span class="arrow-tab"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div id="iframeDoc" class="iframe--bg iframe--height">
+                <iframe src="" frameborder="0" id="visorPdf" type="application/pdf"> </iframe>
+            </div>
+            <div id="divAcciones"></div>
+            <div id="divAcciones2"></div>
+        </div>
+        <div class="row mt-2">
+
+            <div class="col-md-6">
+                <input type="button" id="btnVolver" class="btn btn--default--grey btn-block pt-0 pb-0" value="Volver" onclick="VolverManual('@ViewBag.fechainicial','@ViewBag.fechafinal')" />
+            </div>
+            <div class="col-md-6">
+                <div class="hiddenForms"><input type="number" id="Errors" name="Errors" maxlength="3" value="0"></div>
+                <input type="button" id="btnguardar" onclick="confirmValidaManual();" class="btn btn--default btn-block pt-0 pb-0" value="Guardar validaci&oacute;n">
+            </div>
+
+        </div>
+
+        <input type="button" id="btnSaveValMan" style="visibility:hidden" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn--default btn-block pt-0 pb-0" value="Guardar validaci&oacute;n">
+        @*<input type="button" id="btnmostrarexito" class="btn btn--default btn-block pt-0 pb-0" data-toggle="modal" data-target="#exampleModalCenter" value="Guardar validaci&oacute;n">*@
+        <div class="modal advertencia errorProceso" tabindex="-1" role="dialog" id="exampleModalCenter" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+            <div class="modal-dialog modal--full">
+                <div class="modal-content" id="myModal">
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col-sm-6 offset-sm-3 mt-4">
+                                <p>
+                                    <img src="~/images/advertencia-bien.png" alt="Advertencia Ok" />
+                                </p>
+
+                                <p>
+                                    Sus cambios han sido guardados correctamente
+                                </p>
+                                <p>
+                                    Será redirigido a la página de<br /><strong>"Información cargada".</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!---->
+                <div class="modal-content" id="myModalErr">
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col-sm-6 offset-sm-3 mt-4">
+                                <p>
+                                    <img src="/images/advertencia.png" class="img-fluid" alt="Advertencia">
+                                </p>
+
+                                <p>
+                                    Si requiere ingresar algún dato dentro de los campos,<br>
+                                    recuerde ingresar el valor en la casilla y seleccionar <br>
+                                    el tipo de error de la lista desplegable, <br>
+                                    de lo contrario deje los campos y lista desplegable vacíos.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-6 offset-sm-3">
+                                    <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="button" id="btnmostrarerror" style="visibility:hidden" data-toggle="modal" data-target="#exampleErroneo" value=" ">
+        <div class="modal advertencia" tabindex="-1" role="dialog" id="exampleErroneo" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+            <div class="modal-dialog modal--full">
+                <div class="modal-content" id="myModal">
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="col-sm-6 offset-sm-3 mt-4">
+                                <p>
+                                    <img src="~/images/advertencia-bien.png" alt="Advertencia Ok" />
+                                </p>
+
+                                <p>
+                                    Si requiere ingresar algún dato dentro de los campos,<br>
+                                    recuerde ingresar el valor en la casilla y seleccionar <br>
+                                    el tipo de error de la lista desplegable, <br>
+                                    de lo contrario deje los campos y lista desplegable vacíos.
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-6 offset-sm-3">
+                                    <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $(".ddl").prop("disabled", true);
+        function confirmValidaManual() {
+
+            if (confirm("Desea guardar la validacion manual?")) {
+
+                var contTtales = 0;
+                var contSel = 0;
+
+                $("select").removeAttr('disabled');
+
+                $(".ddlMandatorio").each(function () {
+                    contTtales = contTtales + 1;
+                });
+
+                $(".ddl").each(function () {
+                    if ($(this).val() != "") {
+                        contSel = contSel + 1;
+                    }
+                });
+
+                if (contSel != contTtales) {
+                    $("#myModalErr").show();
+                    $("#myModal").hide();
+                    $("#btnmostrarerror").click();
+                } else {
+                    $("#myModalErr").hide();
+                    $("#myModal").show();
+                    $("#btnSaveValMan").attr('readonly', true);
+                    $("#btnSaveValMan").change();
+                    $("#btnSaveValMan").click();
+                    $("#formValidaManual").submit();
+                }
+
+            }
+        }
+
+
+        $("#btnCloseErr").on("click", function () {
+            $("#myModalErr").hide();
+        });
+
+        $("#btnCloseExitoso").on("click", function () {
+            $("#myModal").hide();
+        });
+
+
+        $(".txt").change(function () {
+
+            var data = $(this);
+            var id = data.attr('id');
+            var idDDL = '';
+            var ValorTotalCierre = 0;
+
+            switch (id) {
+
+                case 'CantPasajeros_New':
+                    idDDL = '#CausalPasajeros';
+                    ValorTotalCierre = @ViewBag.CantPasajeros;
+                    break;
+                case 'CantTransitos_New':
+                    idDDL = '#CausalTransitos';
+                    break;
+                case 'CantInfantes_New':
+                    idDDL = '#CausalInfantes';
+                    break;
+                case 'CantTTL_New':
+                    idDDL = '#CausalTTL';
+                    break;
+                case 'CantTTC_New':
+                    idDDL = '#CausalTTC';
+                    break;
+                case 'CantEX_New':
+                    idDDL = '#CausalEX';
+                    break;
+                case 'CantTRIP_New':
+                    idDDL = '#CausalTRIP';
+                    break;
+                case 'CantPagoCOP_New':
+                    idDDL = '#CausalPagoCOP';
+                    ValorTotalCierre = @ViewBag.PagoCOP;
+                    break;
+                case 'CantPagoUSD_New':
+                    idDDL = '#CausalPagoUSD';
+                    ValorTotalCierre = @ViewBag.PagoUSD;
+                    break;
+            }
+
+            var select = $(idDDL);
+
+            if (!$.isNumeric(data.val())) {
+                data.val("");
+                data.focus();
+                select.removeClass("ddlMandatorio");
+                select.addClass("limpiaColorDDL");
+                select.val("");
+                select.prop("disabled", true);
+            } else {
+                if (data.val() > "0") {
+                    switch (id) {
+                        case 'CantPasajeros_New':
+                            if (ValorTotalCierre === parseInt(data.val())) {
+                                data.focus();
+                                select.removeClass("ddlMandatorio");
+                                select.addClass("limpiaColorDDL");
+                                select.val("");
+                                select.prop("disabled", true);
+                            }
+                            else {
+                                select.addClass("ddlMandatorio");
+                                select.removeAttr('disabled');
+                            }
+                            break;
+                        case 'CantPagoCOP_New':
+                            if (ValorTotalCierre === parseInt(data.val())) {
+                                data.focus();
+                                select.removeClass("ddlMandatorio");
+                                select.addClass("limpiaColorDDL");
+                                select.val("");
+                                select.prop("disabled", true);
+                            }
+                            else {
+                                select.addClass("ddlMandatorio");
+                                select.removeAttr('disabled');
+                            }
+                            break;
+                        case 'CantPagoUSD_New':
+                            if (ValorTotalCierre === parseInt(data.val())) {
+                                data.focus();
+                                select.removeClass("ddlMandatorio");
+                                select.addClass("limpiaColorDDL");
+                                select.val("");
+                                select.prop("disabled", true);
+                            }
+                            else {
+                                select.addClass("ddlMandatorio");
+                                select.removeAttr('disabled');
+                            }
+                            break;
+                        default:
+                            select.addClass("ddlMandatorio");
+                            select.removeAttr('disabled');
+                            break;
+                    }
+                }
+                else {
+                    data.focus();
+                    select.removeClass("ddlMandatorio");
+                    select.addClass("limpiaColorDDL");
+                    select.val("");
+                    select.prop("disabled", true);
+                }
+            }
+            select.change();
+        });
+
+        $(".txt").blur(function () {
+
+            if ($(this).val() != '') {
+                $(this).css('background-color', 'lightgrey');
+                //Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+            }
+            else {
+                $(this).css('background-color', 'white');
+            }
+        });
+
+        $(".nav-link").on('click', function () {
+            $(".nav-link").removeClass('active');
+            $(this).addClass('active');
+        });
+
+        //function PrimeraVezCargaValidacionManual(e) {
+        //    alert("Ejecucion de la pagina  " + e.target.value+ "    "+ e.target.id);
+        //}
+        //window.onload = PrimeraVezCargaValidacionManual;
+
+        $('#CantTransitos_New').attr('readonly', 'true');
+        $('#CantTransitos_New').css('background-color', '#DEDEDE');
+        /*
+        document.getElementsByClassName("Ocultar")[0].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[1].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[2].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[3].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[4].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[5].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[6].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[7].style.visibility = 'hidden';
+        document.getElementsByClassName("Ocultar")[8].style.visibility = 'hidden';
+        */
+        document.getElementById("CantPasajeros_New").addEventListener('keyup', PasajerosNuevo);
+        document.getElementById("CantTransitos_New").addEventListener('keyup', TransitosNuevo);
+        document.getElementById("CantInfantes_New").addEventListener('keyup', InfantesNuevo);
+        document.getElementById("CantTTL_New").addEventListener('keyup', TTLNuevo);
+        document.getElementById("CantTTC_New").addEventListener('keyup', TTCNuevo);
+        document.getElementById("CantEX_New").addEventListener('keyup', EXNuevo);
+        document.getElementById("CantTRIP_New").addEventListener('keyup', TRIPNuevo);
+        document.getElementById("CantPagoCOP_New").addEventListener('keyup', PagoCOPNuevo);
+        document.getElementById("CantPagoUSD_New").addEventListener('keyup', PagoUSDNuevo);
+        /*
+        document.getElementById("CantPasajeros_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        //document.getElementById("CantTransitos_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantInfantes_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantTTL_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantTTC_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantEX_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantTRIP_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantPagoCOP_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        document.getElementById("CantPagoUSD_New").addEventListener('change', Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD);
+        */
+        document.getElementById("Errors").addEventListener('change', ActivarGuardar);
+
+
+
+        if (@(ViewBag.CantPasajeros)== 0) {
+
+            $('#CantPasajeros_New').attr('readonly', 'true');
+            $('#CantPasajeros_New').css('background-color', '#DEDEDE');
+        }
+
+        if (@(ViewBag.CantTransitos)== 0) {
+
+            $('#CantTransitos_New').attr('readonly', 'true');
+            $('#CantTransitos_New').css('background-color', '#DEDEDE');
+        }
+
+        if (@(ViewBag.CantInfantes)== 0 && '@(ViewBag.Tipo)' === 'DOM') {
+
+            $('#CantInfantes_New').attr('readonly', 'true');
+            $('#CantInfantes_New').css('background-color', '#DEDEDE');
+            $("#CalculadoInfantes").text(0).val();
+        }
+
+        if (@(ViewBag.CantTTL)== 0) {
+
+            $('#CantTTL_New').attr('readonly', 'true');
+            $('#CantTTL_New').css('background-color', '#DEDEDE');
+        }
+
+        if (@(ViewBag.CantTTC)== 0) {
+
+            $('#CantTTC_New').attr('readonly', 'true');
+            $('#CantTTC_New').css('background-color', '#DEDEDE');
+        }
+
+        if (@(ViewBag.CantEX)== 0) {
+
+            $('#CantEX_New').attr('readonly', 'true');
+            $('#CantEX_New').css('background-color', '#DEDEDE');
+        }
+
+        if (@(ViewBag.CantTRIP)== 0) {
+
+            $('#CantTRIP_New').attr('readonly', 'true');
+            $('#CantTRIP_New').css('background-color', '#DEDEDE');
+        }
+
+
+        if (@(ViewBag.PagoCOP)== 0) {
+
+            $('#CantPagoCOP_New').attr('readonly', 'true');
+            $('#CantPagoCOP_New').css('background-color', '#DEDEDE');
+        }
+
+        if (@(ViewBag.PagoUSD)== 0) {
+
+            $('#CantPagoUSD_New').attr('readonly', 'true');
+            $('#CantPagoUSD_New').css('background-color', '#DEDEDE');
+        }
+
+
+        $('#CantPasajeros_New').val(@(ViewBag.CantPasajeros));
+        $('#CantPagoCOP_New').val(@(ViewBag.PagoCOP));
+        $('#CantPagoUSD_New').val(@(ViewBag.PagoUSD)).val();
+
+
+        var ctrlError = $("#Errors").hide();
+
+        function IIFSumCategoria(ValorDigitado, ValorCierre) {
+            ValorDigitado = isNaN(ValorDigitado) == true ? "" : ValorDigitado;
+            //if (ValorDigitado == "0") { ValorDigitado = "";}
+            var result = parseInt(ValorDigitado === "" ? ValorCierre : ValorDigitado);
+            return result;
+        }
+
+
+        function ActivarGuardar() {
+
+            $("#btnguardar").prop("disabled", false);
+
+            if (ctrlError.val() > 0) {
+                $("#btnguardar").prop("disabled", true);
+            }
+
+        }
+
+        function PasajerosNuevo(e) {
+
+            $("#CantPasajeros_New").removeClass('warnings');
+
+            var value = $(this).val();
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            if (value >= "@(ViewBag.CantPasajeros)") {
+                $("#Errors").val(0);
+            }
+
+            valorNuevo = parseInt(value === "" ? 0 : value);
+            valorViejo = @(ViewBag.CantPasajeros);
+
+            $('#RestarCantidadPasajeros').text(valorNuevo !== 0 ? valorNuevo : valorViejo).val();
+            $('#CalculadoPasajeros').text(valorNuevo !== 0 ? valorNuevo : valorViejo).val();
+
+            if (valorNuevo === 0) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantPasajeros_New").addClass('warnings');
+            }
+            else if (valorNuevo < valorViejo) {
+
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantPasajeros_New").addClass('warnings');
+                console.log("Error el valor pasajeros = " + valorNuevo + " No puede ser menor al valor notificado al cierre " + valorViejo);
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function TransitosNuevo(e) {
+
+            var value = $(this).val();
+
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            valorNuevo = parseInt(value);
+            valorViejo = @(ViewBag.CantTransitos);
+
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function sumaTransitos() {
+
+            $("#CantTTL_New").removeClass('warnings');
+            $("#CantTTC_New").removeClass('warnings');
+
+            valorViejo = 0;
+
+            var totalTransito = Number($("#CalculadoTTL").text()) + Number($("#CalculadoTTC").text());
+            var totalTransitoInicial = @(ViewBag.CantTransitos);
+            var diferencia = totalTransitoInicial - totalTransito;
+
+            $("#RestarCantidadTransitos").text(totalTransito);
+            $("#CalculadoTransitos").text(diferencia);
+
+            if (diferencia < 0) {
+                console.log("La suma de ttl + ttc no puede ser superior a la sugeridad al Cierre");
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+
+            }
+
+            var ttlViejo = @ViewBag.CantTTL;
+            var ttcViejo = @ViewBag.CantTTC;
+
+            if (Number($("#RestarCantidadTTL").text()) > ttlViejo) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantTTL_New").addClass('warnings');
+                console.log("Error el valor nuevo del TTL =" + Number($("#RestarCantidadTTL").text()) + " es mayor a almacenado al Cierre =" + ttlViejo);
+            }
+
+            if (Number($("#RestarCantidadTTC").text()) > ttcViejo) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantTTC_New").addClass('warnings');
+                console.log("Error el valor nuevo del TTC =" + Number($("#RestarCantidadTTC").text()) + " es mayor a almacenado al Cierre =" + ttcViejo);
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function InfantesNuevo(e) {
+
+            $("#CantInfantes_New").removeClass('warnings');
+            var value = $(this).val();
+
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            $("#RestarCantidadInfantes").text(value).val();
+            valorNuevo = parseInt(value === "" ? 0 : value);
+            valorViejo = @(ViewBag.CantInfantes);
+
+            $('#CalculadoInfantes').text(isNaN(valorViejo - valorNuevo) ? valorViejo : valorViejo - valorNuevo).val();
+
+            if (valorNuevo >= valorViejo) {
+
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantInfantes_New").addClass('warnings');
+                console.log("Error el valor digitado del infante =" + valorNuevo + " es mayor al cierre " + valorViejo);
+
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function TTLNuevo(e) {
+
+            $("#CantTTL_New").removeClass('warnings');
+            var value = $(this).val();
+
+            if (value < "@(ViewBag.CantTTL)") {
+                $("#Errors").val(0);
+            }
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            $("#RestarCantidadTTL").text(value).val();
+            valorNuevo = parseInt(value);
+            valorViejo = @(ViewBag.CantTTL);
+
+            $('#CalculadoTTL').text(isNaN(valorViejo - valorNuevo) ? valorViejo : valorViejo - valorNuevo).val();
+
+
+            if (parseInt(valorNuevo) >= parseInt(valorViejo)) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantTTL_New").addClass('warnings');
+            }
+
+            //sumaTransitos();
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function TTCNuevo(e) {
+
+            $("#CantTTC_New").removeClass('warnings');
+
+            var value = $(this).val();
+
+            if (value <= "@(ViewBag.CantTTC)") {
+                $("#Errors").val(0);
+            }
+
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            $("#RestarCantidadTTC").text(value).val();
+            valorNuevo = parseInt(value);
+            valorViejo = @(ViewBag.CantTTC);
+
+            $('#CalculadoTTC').text(isNaN(valorViejo - valorNuevo) ? valorViejo : valorViejo - valorNuevo).val();
+
+            if (parseInt(valorNuevo) >= parseInt(valorViejo)) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantTTC_New").addClass('warnings');
+            }
+            //sumaTransitos();
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function EXNuevo(e) {
+
+            $("#CantEX_New").removeClass('warnings');
+
+            var value = $(this).val();
+
+            if (value <= "@(ViewBag.CantEX)") {
+                $("#Errors").val(0);
+            }
+
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            $("#RestarCantidadEX").text(value).val();
+            valorNuevo = parseInt(value);
+            valorViejo = @(ViewBag.CantEX);
+
+            $('#CalculadoEX').text(isNaN(valorViejo - valorNuevo) ? valorViejo : valorViejo - valorNuevo).val();
+
+            if (valorNuevo >= valorViejo) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantEX_New").addClass('warnings');
+                console.log("Error el valor nuevo del EX = " + valorNuevo + " es mayor a almacenado al Cierre " + valorViejo);
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function TRIPNuevo(e) {
+
+            $("#CantTRIP_New").removeClass('warnings');
+            var value = $(this).val();
+
+            if (value <= "@(ViewBag.CantTRIP)") {
+                $("#Errors").val(0);
+            }
+
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            $("#RestarCantidadTRIP").text(value).val();
+            valorNuevo = parseInt(value);
+            valorViejo = @(ViewBag.CantTRIP);
+
+            $('#CalculadoTRIP').text(isNaN(valorViejo - valorNuevo) ? valorViejo : valorViejo - valorNuevo).val();
+
+            if (valorNuevo >= valorViejo) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantTRIP_New").addClass('warnings');
+                console.log("Error el valor nuevo del trip = " + valorNuevo + "  es mayor a almacenado al Cierre = " + valorViejo);
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function PagoCOPNuevo(e) {
+
+            $("#CantPagoCOP_New").removeClass('warnings');
+            var value = $(this).val();
+            if (value >= "@(ViewBag.PagoCOP)") {
+                $("#Errors").val(0);
+            }
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            valorNuevo = parseInt(value === "" ? 0 : value);
+            valorViejo = @(ViewBag.PagoCOP);
+            $("#CalculadoPagoCOP").text(valorNuevo).val();
+
+            if (valorNuevo === 0) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantPagoCOP_New").addClass('warnings');
+            }
+            else if (valorNuevo < valorViejo) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantPagoCOP_New").addClass('warnings');
+                console.log("Error el valor paga Cop = " + valorNuevo + " No puede ser menor al valor notificado al cierre " + valorViejo);
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+        }
+
+        function PagoUSDNuevo(e) {
+
+            $("#CantPagoUSD_New").removeClass('warnings');
+            var value = $(this).val();
+            if (value >= "@(ViewBag.PagoUSD)") {
+                $("#Errors").val(0);
+            }
+            var valorNuevo = 0;
+            var valorViejo = 0;
+
+            valorNuevo = parseInt(value === "" ? 0 : value);
+            valorViejo = @(ViewBag.PagoUSD);
+            $("#CalculadoPagoUSD").text(valorNuevo).val();
+
+            if (valorNuevo === 0) {
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantPagoUSD_New").addClass('warnings');
+            }
+            else if (valorNuevo < valorViejo) {
+
+                $("#Errors").val(Number($("#Errors").val()) + 1);
+                $("#CantPagoUSD_New").addClass('warnings');
+                console.log("Error el valor paga USD = " + valorNuevo + " No puede ser menor al valor notificado al cierre " + valorViejo);
+            }
+            Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD();
+
+        }
+
+        function Sumar_TTL_TTC_EX_TRIP_PagoCOP_PagoUSD() {
+
+            $("#CantPasajeros_New").removeClass('warnings');
+
+            var sumarTodosLosNuevos = 0;
+
+            if ('@(ViewBag.Tipo)' === 'INT') {
+                sumarTodosLosNuevos =
+                    IIFSumCategoria($("#CantTTL_New").val(), @(ViewBag.CantTTL)) +
+                    IIFSumCategoria($("#CantTTC_New").val(), @(ViewBag.CantTTC)) +
+                    IIFSumCategoria($("#CantEX_New").val(), @(ViewBag.CantEx)) +
+                    IIFSumCategoria($("#CantTRIP_New").val(), @(ViewBag.CantTrip)) +
+                    parseInt($("#CalculadoPagoCOP").text() === "" ? 0 : $("#CalculadoPagoCOP").text()) +
+                    parseInt($("#CalculadoPagoUSD").text() === "" ? 0 : $("#CalculadoPagoUSD").text());
+
+                if (sumarTodosLosNuevos != parseInt($("#CantPasajeros_New").val())) {
+                    $("#Errors").val(Number($("#Errors").val()) + 1);
+                    $("#CantPasajeros_New").addClass('warnings');
+                    console.log("Error el valor sumado de  ttl + ttc + ex + trip + PagoCOP + PagoUSD "
+                        + sumarTodosLosNuevos + " No puede ser mayor a Pasajeros "
+                        + parseInt($("#CantPasajeros_New").val()));
+                }
+            }
+            else {
+                try {
+                    sumarTodosLosNuevos =
+                        IIFSumCategoria($("#CantInfantes_New").val(), @(ViewBag.CantInfantes)) +
+                        IIFSumCategoria($("#CantTTL_New").val(), @(ViewBag.CantTTL)) +
+                        IIFSumCategoria($("#CantTTC_New").val(), @(ViewBag.CantTTC)) +
+                        IIFSumCategoria($("#CantEX_New").val(), @(ViewBag.CantEx)) +
+                        IIFSumCategoria($("#CantTRIP_New").val(), @(ViewBag.CantTrip)) +
+                        parseInt($("#CalculadoPagoCOP").text() === "" ? 0 : $("#CalculadoPagoCOP").text()) +
+                        parseInt($("#CalculadoPagoUSD").text() === "" ? 0 : $("#CalculadoPagoUSD").text());
+
+                    if (sumarTodosLosNuevos != parseInt($("#CantPasajeros_New").val())) {
+                        $("#Errors").val(Number($("#Errors").val()) + 1);
+                        $("#CantPasajeros_New").addClass('warnings');
+                        console.log("Error el valor sumado de inf + ttl + ttc + ex + trip + PagoCOP + PagoUSD "
+                            + sumarTodosLosNuevos + " No puede ser mayor a Pasajeros "
+                            + parseInt($("#CantPasajeros_New").val()));
+                    }
+                }
+                catch (o) {
+                    console.log(o);
+                }
+            }
+            ActivarGuardar();
+        }
+
+
+    </script>
+}

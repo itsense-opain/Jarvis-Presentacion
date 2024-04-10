@@ -1,0 +1,97 @@
+﻿@page
+@model ResetPassModel
+@{
+}
+<div class="row">
+    <div class="col-sm-4 offset-sm-4">
+        <div class="row">
+            <h1 class="col-sm-12">
+                Actualización de contraseña
+            </h1>
+        </div>
+        <form method="post" id="formReset" onsubmit="return validarContrasena()">
+            @if (ViewData["Confirmacion"] == null)
+            {
+                <div class="form-group">
+                    <label for="email">Email  </label>
+                    <input type="email" class="form-control" id="email" disabled="disabled" value="@HttpContext.Request.Query["Email"]">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Contraseña</label>
+                    <input asp-for="Input.Password1" class="form-control" id="password1" />
+                    @*<span asp-validation-for="Input.Password1" class="tool__valide"></span>*@
+                    <span id="errorContrasena" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Repetir contraseña</label>
+                    <input asp-for="Input.Password2" class="form-control" />
+                    @*<span asp-validation-for="Input.Password2" class="tool__valide"></span>*@
+                </div>
+                <button type="button" class="btn btn--default btnEnviar">Guardar</button>
+            }
+            else
+            {
+                @if (ViewData["Confirmacion"] != null && ViewData["Confirmacion"].ToString() == "1")
+                {
+                    <span>Constraseña actualizada correctamente, para ingresar dar clic en el enlace</span>
+                    <br />
+                    <a href="/" class="btn btn--default">Ingresar</a>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label for="email">Email  </label>
+                        <input type="email" class="form-control" id="email" disabled="disabled" value="@HttpContext.Request.Query["Email"]">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Contraseña</label>
+                        <input asp-for="Input.Password1" class="form-control" id="password1" />
+                        <span id="errorContrasena" class="text-danger"></span>
+                        @*<span asp-validation-for="Input.Password1" class="tool__valide"></span>*@
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Repetir contraseña</label>
+                        <input asp-for="Input.Password2" class="form-control" />
+                        @*<span asp-validation-for="Input.Password2" class="tool__valide"></span>*@
+                    </div>
+                    <button type="button" class="btn btn--default btnEnviar">Guardar</button>
+                    @ViewData["Confirmacion"]
+                }
+
+            }
+
+
+
+
+
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        
+        $(function () {
+
+            $(".btnEnviar").on("click", function () {
+                 $("#formReset").submit();
+            });
+
+        });
+
+        function validarContrasena() {
+            var contrasena = document.getElementById('password1').value;
+            var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
+
+            if (!regex.test(contrasena)) {
+                document.getElementById('errorContrasena').innerText = 'La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula, una letra minúscula, un número y un carácter especial.';
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    @*<partial name="_ValidationScriptsPartial" />*@
+}

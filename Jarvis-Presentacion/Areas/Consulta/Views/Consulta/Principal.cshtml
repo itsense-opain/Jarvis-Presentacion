@@ -1,0 +1,152 @@
+﻿@model IEnumerable<Opain.Jarvis.Dominio.Entidades.ConsultaOtd>
+@inject Opain.Jarvis.Presentacion.Web.Helpers.ServicioComboBox ServicioComboBox
+
+@{
+    ViewData["Title"] = "Consultas";
+    }
+
+<h1>Consultas</h1>
+
+
+<div class="bg--white mb-5">
+    A continuación, se muestra el resumen de los vuelos que han sido guardados en el sistema
+    <hr />
+    <div class="table-responsive">
+        <table class="table" id="tblConsultas">
+            <thead>
+                <tr>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.Fecha)
+                    </th>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.CantidadVuelos)
+                    </th>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.NovedadesCargue)
+                    </th>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.NovedadesProceso)
+                    </th>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.Exitoso)
+                    </th>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.Procesados)
+                    </th>
+                    <th style="width: 133px;">
+                        Detalle de los vuelos
+                    </th>
+                    <th style="width: 133px;">
+                        @Html.DisplayNameFor(model => model.Finalizados)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Fecha.Day.ToString().PadLeft(2, '0')/@item.Fecha.Month.ToString().PadLeft(2, '0')/@item.Fecha.Year.ToString()
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CantidadVuelos)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NovedadesCargue)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NovedadesProceso)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Exitoso)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Procesados)
+                        </td>
+                        <td>
+                            <button class="btn btn--simple" data-toggle="modal" data-target=".detalle-vuelo">
+                                <img src="~/images/buscar.png" alt="Detalles" onclick="ConsultarVuelos('@Html.DisplayFor(modelItem => item.Fecha)', '@Html.DisplayFor(modelItem => item.Id)');" />
+                            </button>
+                        </td>
+                        <td>
+
+                            @if (item.Finalizados.Equals(item.CantidadVuelos))
+                            {
+                                <img src="~/images/ok.png" alt="Finalizado" />
+                            }
+                            else
+                            {
+                                <img src="~/images/nulo.png" alt="Pendiente" />
+                            }
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!--Modal detalle del vuelo-->
+<div class="modal fade detalle-vuelo" tabindex="-1" role="dialog" aria-labelledby="detalle-vuelo" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-block btn__close" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <h1>
+                        DETALLE DEL VUELO
+                    </h1>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            A continuación se muestra la información en detalle de los vuelos
+                            <hr />
+                        </div>
+
+                        @*<div class="col-sm-6">
+                                <button type="button" class="btn btn--border"> <img src="~/images/descargar.png" alt="Descargar Excel" /> Descargar tabla en excel</button>
+                            </div>*@
+                    </div>
+                    <div class="table-responsive" id="divCargarVuelos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal detalle de la novedad-->
+<div class="modal fade detalle-novedad" tabindex="-1" role="dialog" aria-labelledby="detalle-novedad" aria-hidden="true" style="margin-right:0px!important; padding-right:0px!important">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-block btn__back" data-dismiss="modal">
+                            <img src="~/images/regresar.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <h1>
+                        DETALLE DE LA NOVEDAD
+                    </h1>
+                    <hr />
+                    <div id="divCargarNovedades"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

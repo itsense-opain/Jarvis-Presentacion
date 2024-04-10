@@ -1,0 +1,38 @@
+﻿@model Opain.Jarvis.Dominio.Entidades.HorarioOperacionOtd
+
+<form class="needs-validation" novalidate>
+    <div class="text-right">
+        <button type="button" id="btnInsertarHorarioOperacion" class="btn btn--border" data-toggle="modal" data-target=".guardado" onclick="GuardarHorarioOperacionPost();"><img src="~/images/guardar.png" alt="Guardar cambios" class="img-fluid mr-2 ml-2">Guardar cambios</button>
+    </div>
+    <hr />
+    <div class="col-sm-6 offset-sm-3">
+        <div class="justify-content-center d-flex mb-2">
+            <select id="DiaOperacion" class="form-control" required>
+                <option value="L">Lunes</option>
+                <option value="M">Martes</option>
+                <option value="W">Míercoles</option>
+                <option value="J">Jueves</option>
+                <option value="V">Viernes</option>
+                <option value="S">Sabado</option>
+                <option value="D">Domingo</option>
+            </select>
+        </div>
+        <div class="justify-content-center d-flex mb-2">
+            <div class="form-group flex-fill mb-3 mr-3 time--width">
+                <input class="timepicker" readonly id="HoraInicioOperacion" />
+                <div class="invalid-tooltip">
+                    Por favor escriba un valor valido
+                </div>
+            </div>
+            <div class="flex-fill text-center mt-2">
+                hasta
+            </div>
+            <div class="form-group flex-fill mb-2 ml-2  time--width">
+                <input class="timepicker" readonly id="HoraFinOperacion" />
+                <div class="invalid-tooltip">
+                    Por favor escriba un valor valido
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

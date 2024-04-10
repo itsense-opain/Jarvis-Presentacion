@@ -1,0 +1,467 @@
+﻿
+@{
+    ViewData["Title"] = "Administración";
+}
+
+<h1>Administración</h1>
+
+<div class="bg--white">
+    <h2>
+        Crear y consultar
+    </h2>
+    <span>A continuación podrá gestionar los usuarios de las aerolíneas</span>
+</div>
+
+<div class="bg--white mb-5">
+    <table class="example" style="width:100%">
+        <thead>
+            <tr>
+                <td style="width:40px">
+                    Estado
+                </td>
+                <td style="width:47px">
+                    Nombre
+                </td>
+                <td style="width:48px">
+                    Apellido
+                </td>
+                <td style="width:41px !important">
+                    Tipo de ID
+                </td>
+                <td style="width:80px">
+                    Número de identificación
+                </td>
+                <td>
+                    Correo electrónico
+                </td>
+                <td>
+                    Teléfono
+                </td>
+                <td>
+                    Cargo
+                </td>
+                <td>
+                    Perfil
+                </td>
+                <td>
+                    Aerolínea
+                </td>
+                <td style="width:52px">
+                    Acciones
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Activo
+                </td>
+                <td>
+                    Miguel
+                </td>
+                <td>
+                    Gonzales
+                </td>
+                <td>
+                    C.C
+                </td>
+                <td>
+                    1234567899
+                </td>
+                <td class="text-break">
+                    miguelmauricio.gonzalescorredor@avianca.com
+
+                </td>
+                <td>
+                    1234567890
+                </td>
+                <td>
+                    Super Administrador
+                </td>
+                <td>
+                    Administrador
+                </td>
+                <td>
+                    America Airlines
+                </td>
+                <td>
+                    <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".eliminar">
+                        <img src="~/images/borrar.png" alt="Eliminar">
+                    </button>
+                    <button type="button" class="btn btn--simple d-inline float-right p-1" data-toggle="modal" data-target=".editar">
+                        <img src="~/images/editar.png" alt="Editar">
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Inactivo
+                </td>
+                <td>
+                    Miguel Angel
+                </td>
+                <td>
+                    Gonzales Corredor
+                </td>
+                <td>
+                    C.C
+                </td>
+                <td>
+                    1234567899
+                </td>
+                <td class="text-break">
+                    miguel.gonzales@avianca.com
+                </td>
+                <td>
+                    1234567890
+                </td>
+                <td>
+                    Administrador
+                </td>
+                <td>
+                    Administrador
+                </td>
+                <td>
+                    LATAM
+                </td>
+                <td>
+                    <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".eliminar">
+                        <img src="~/images/borrar.png" alt="Eliminar">
+                    </button>
+                    <button type="button" class="btn btn--simple d-inline float-right p-1" data-toggle="modal" data-target=".editar">
+                        <img src="~/images/editar.png" alt="Editar">
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--Modal eliminar-->
+<div class="modal fade advertencia eliminar" tabindex="-1" role="dialog" aria-labelledby="eliminar" aria-hidden="true">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/advertencia.png" class="img-fluid" />
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-4 offset-sm-4">
+                        <p>
+                            ¿Esta seguro de eliminar este usuario?
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">No</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn--default btn-block" data-toggle="modal" data-target=".errorProceso">Si</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal error-->
+<div class="modal fade advertencia errorProceso" tabindex="-1" role="dialog" aria-labelledby="errorProceso" aria-hidden="true">
+    <div class="modal-dialog modal--full">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/advertencia.png" class="img-fluid" />
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="col-sm-4 offset-sm-4">
+                        <p>
+                            Ha ocurrido un error,<br/>
+                            no se ha podido procesar su solicitud
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6 offset-sm-3">
+                            <button type="button" class="btn btn--default btn-block" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal crear nuevo usuario-->
+<div class="modal fade crear" tabindex="-1" role="dialog" aria-labelledby="crear" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-sm-4 offset-sm-2">
+                            <button type="button" class="btn btn-block" data-dismiss="modal">
+                                <img src="~/images/cerra.png" alt="Cerrar" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <form class="needs-validation" novalidate>
+                    <div class="modal-body">
+                        <div class="container">
+                            <h1>
+                                Crear usuario
+                            </h1>
+                            <p>
+                                A continuación llene los siguientes campos
+                            </p>
+                            <hr />
+
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="Name">Nombre</label>
+                                    <input type="text" class="form-control" id="Name" placeholder="Nombre" required />
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba el nombre del usuario
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                    <label for="lastName">Apellido</label>
+                                    <input type="text" class="form-control" id="lastName" placeholder="Apellido" required />
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba el apellido del usuario
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="idType">Tipo de identificación</label>
+                                    <select id="idType" class="form-control" required>
+                                        <option value="">Seleccione una opción</option>
+                                        <option value="CC">Cédula de ciudadanía</option>
+                                        <option value="CE">Cédula de extrajería</option>
+                                        <option value="NIT">NIT</option>
+                                        <option value="ETC">etc</option>
+                                    </select>
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba el tipo de identificación
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="idNumber">Número de identificación</label>
+                                    <input type="number" class="form-control" id="idNumber" placeholder="Número de identificación" required />
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba el número de identificación del usuario
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="email">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Correo electrónico" required />
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba un correo electrónico valido
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="phone">Teléfono</label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="Teléfono" required />
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba un número de teléfono
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="cargo">Cargo</label>
+                                    <input type="text" class="form-control" id="cargo" placeholder="Cargo" required />
+                                    <div class="invalid-tooltip">
+                                        Por favor escriba el cargo
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="Perfil">Perfil</label>
+                                    <select id="Perfil" class="form-control" required>
+                                        <option value="">Seleccione una opción</option>
+                                        <option value="1">Perfil 1</option>
+                                        <option value="2">Perfil 2</option>
+                                        <option value="3">Perfil 2</option>
+                                    </select>
+                                    <div class="invalid-tooltip">
+                                        Por favor seleccione el tipo de perfil
+                                    </div>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="airline">Aerolínea</label>
+                                    <select id="airline" class="form-control" required>
+                                        <option value="">Seleccione una opción</option>
+                                        <option value="1">Avianca</option>
+                                        <option value="2">America airlines</option>
+                                        <option value="3">LATAM</option>
+                                    </select>
+                                    <div class="invalid-tooltip">
+                                        Por favor seleccione la aerolínea
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn--default btn-block">Crear usuario</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+
+<!--Modal editar usuario-->
+<div class="modal fade editar" tabindex="-1" role="dialog" aria-labelledby="editar" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="container">
+                        <h1>Editar usuario</h1>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p>Para editar la información de clic sobre el campo correspondiente</p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="text-right col-sm-6 offset-sm-6">
+                                Estado del usuario
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round">
+                                        <span>Activo</span>
+                                    </span>
+                                    <span class="absolute-no">Inactivo</span>
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label for="Name">Nombre</label>
+                                <input type="text" class="form-control" id="Name" placeholder="Nombre" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el nombre del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="lastName">Apellido</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Apellido" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el apellido del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="typeID">Tipo de identificación</label>
+                                <select id="typeID" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="cc">Cédula de ciudadanía</option>
+                                    <option value="ce">Cédula de extranjería</option>
+                                    <option value="nit">NIT</option>
+                                    <option value="pasaporte">Pasaporte</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el apellido del usuario
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="numberID">Número de identificación</label>
+                                <input type="number" class="form-control" id="numberID" placeholder="Número de identificación" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un número de identificación
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="mail">Correo electrónico</label>
+                                <input type="email" class="form-control" id="mail" placeholder="Correo electrónico" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un correo electrónico
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="tel">Teléfono</label>
+                                <input type="tel" class="form-control" id="tel" placeholder="Teléfono" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba un número de teléfono
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="cargo">Cargo</label>
+                                <input type="text" class="form-control" id="cargo" placeholder="Cargo" required />
+                                <div class="invalid-tooltip">
+                                    Por favor escriba el cargo
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="Perfil">Perfil</label>
+                                <select id="Perfil" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="1">Super administrador</option>
+                                    <option value="2">Administrador</option>
+                                    <option value="3">Usuario</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione un Perfil
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label for="aero">Aerolínea</label>
+                                <select id="aero" class="form-control" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="avianca">Avianca</option>
+                                    <option value="latam">LATAM</option>
+                                    <option value="copa">Copa Airlines</option>
+                                </select>
+                                <div class="invalid-tooltip">
+                                    Por favor seleccione una aerolínea
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn--default--grey btn-block" data-dismiss="modal">Cancelar</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" class="btn btn--default btn-block" data-dismiss="modal">Guardar cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

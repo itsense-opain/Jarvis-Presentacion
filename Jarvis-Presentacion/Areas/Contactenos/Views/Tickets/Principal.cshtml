@@ -1,0 +1,508 @@
+﻿@model IEnumerable<Opain.Jarvis.Dominio.Entidades.TicketOtd>
+@{
+    ViewData["Title"] = "Contáctenos";
+    string activarLista = "";
+}
+
+<h1>Contáctenos</h1>
+
+@if (!string.IsNullOrEmpty(ViewData["resultado"].ToString()))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <p class="mb-0">@ViewData["resultado"].ToString()</p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<div class="bg--white mb-4">
+    Aquí podrá verificar y hacer el seguimiento de sus tickets 345
+</div>
+
+
+@*<!-- Nav tabs -->*@
+<ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
+    @if (User.IsInRole("AEROLINEA") || User.IsInRole("CARGA") || User.IsInRole("SUPERVISOR") || User.IsInRole("SUPERVISOR CARGA"))
+    {
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">
+                Crear mensaje
+                <span class="arrow-tab"></span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                Seguimiento de tickets
+                <span class="arrow-tab"></span>
+            </a>
+        </li>
+
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                Seguimiento de tickets
+                <span class="arrow-tab"></span>
+            </a>
+        </li>
+    }
+
+</ul>
+
+<div class="tab-content" id="pills-tabContent">
+
+    @if (User.IsInRole("AEROLINEA") || User.IsInRole("CARGA") || User.IsInRole("SUPERVISOR") || User.IsInRole("SUPERVISOR CARGA"))
+    {
+        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            @await Html.PartialAsync("/Areas/Contactenos/Views/Tickets/Insertar.cshtml", new Opain.Jarvis.Dominio.Entidades.TicketOtd { })
+        </div>
+    }
+
+    @if(User.IsInRole("OPAIN") || User.IsInRole("ADMINISTRADOR"))
+    {
+        activarLista = " show active";
+    }
+
+    <div class="tab-pane fade mb-5 @activarLista" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <div class="bg--white mb-5">
+            <div class="row">
+                <div class="col-sm-2">
+                    Tipo de ticket
+                </div>
+                <div class="col-sm-10">
+                    <form class="form-inline text-center radio__filter">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" id="customCheck" name="lsTickets" value="Vuelos" checked>
+                            <label class="custom-control-label" for="customCheck">Vuelos</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" id="customCheck2" name="lsTickets" value="Cobros">
+                            <label class="custom-control-label" for="customCheck2">Cobros</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" id="customCheck3" name="lsTickets" value="Anexos">
+                            <label class="custom-control-label" for="customCheck3">Anexos</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" id="customCheck4" name="lsTickets" value="Factura">
+                            <label class="custom-control-label" for="customCheck4">Factura</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" id="customCheck5" name="lsTickets" value="PQR">
+                            <label class="custom-control-label" for="customCheck5">PQR</label>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <hr />
+            <!------>
+            <div id="showVuelos" class="radio__content" style="display:inline">
+                <table class="nowrap" id="tbltckvuelos"  style="width:100%">
+                    <thead>
+                        <tr>
+                            <td style="width:70px">
+                                Estado
+                            </td>
+                            <td style="width: 75px;">
+                                Fecha
+                            </td>
+                            <td style="width:74px">
+                                Número de ticket
+                            </td>
+                            <td style="width:65px">
+                                Número de vuelo
+                            </td>
+                            <td style="width:93px">
+                                Aerolínea
+                            </td>
+                            <td>
+                                Asunto
+                            </td>
+                            <td style="width:290px">
+                                Descripción
+                            </td>
+                            <td style="width: 77px;">
+                                Seguimiento
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.Where(x => x.TipoConsulta.Equals(1)))
+                        {
+                        <tr>
+                            <td>
+                                @if (item.Estado == 1)
+                                {<text>Abierto</text>}
+                            else
+                            {<text>Cerrado</text>}
+                            </td>
+                            <td style="width:75px">
+                                @String.Concat(item.FechaCreacion.Day.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Month.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Year.ToString(), " ", item.FechaCreacion.Hour.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Minute.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Second.ToString().PadLeft(2, '0'))
+                            </td>
+                            <td style="width:65px">
+                                @item.NumeroTicket
+                            </td>
+                            <td style="width:74px">
+                                @item.Asunto
+                            </td>
+
+                            <td style="width:93px">
+                                @item.NombreAerolinea
+                            </td>
+                            <td class="text-left">
+                                @item.Asunto
+
+                            </td>
+                            <td class="text-left" style="width:290px">
+                                <p class="descrption">
+                                    @item.Mensaje
+                                </p>
+                            </td>
+                            <td style="width: 77px;">
+                                <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".detalleTicket" onclick="DetalleTicket(@item.Id);">
+                                    <img src="~/images/buscar.png" alt="Ver detalles">
+                                </button>
+                                @if (item.Seguimiento == 1)
+                                {
+                                    <div class="new">
+                                        Nuevo
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!------>
+            <div id="showCobros" class="radio__content">
+                <table class="nowrap" id="tbltckcobros" style="width:100%">
+                    <thead>
+                        <tr>
+                            <td>
+                                Estado
+                            </td>
+                            <td style="width: 75px;">
+                                Fecha
+                            </td>
+                            <td style="width:74px">
+                                Número de ticket
+                            </td>
+                            <td style="width:65px">
+                                Número de vuelo
+                            </td>
+                            <td style="width:93px">
+                                Aerolínea
+                            </td>
+                            <td>
+                                Asunto
+                            </td>
+                            <td style="width:290px">
+                                Descripción
+                            </td>
+                            <td style="width: 77px;">
+                                Seguimiento
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(x => x.TipoConsulta.Equals(2)))
+                        {
+                        <tr>
+                            <td>
+                                @if (item.Estado == 1)
+                                {<text>Abierto</text>}
+                            else
+                            {<text>Cerrado</text>}
+                            </td>
+                            <td style="width:75px">
+                                @String.Concat(item.FechaCreacion.Day.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Month.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Year.ToString(), " ", item.FechaCreacion.Hour.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Minute.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Second.ToString().PadLeft(2, '0'))
+
+                            </td>
+                            <td style="width:65px">
+                                @item.NumeroTicket
+                            </td>
+                            <td style="width:74px">
+                                @item.Asunto
+                            </td>
+                            <td style="width:93px">
+                                @item.NombreAerolinea
+                            </td>
+                            <td class="text-left">
+                                @item.Asunto
+
+                            </td>
+                            <td class="text-left" style="width:290px">
+                                <p class="descrption">
+                                    @item.Mensaje
+                                </p>
+                            </td>
+                            <td style="width: 77px;">
+                                <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".detalleTicket" onclick="DetalleTicket(@item.Id);">
+                                    <img src="~/images/buscar.png" alt="Ver detalles">
+                                </button>
+                                @if (item.Seguimiento == 1)
+                                {
+                                    <div class="new">
+                                        Nuevo
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!------>
+            <div id="showAnexos" class="radio__content">
+                <table class="nowrap" id="tbltckanexos" style="width:100%">
+                    <thead>
+                        <tr>
+                            <td style="width: 98px;">
+                                Estado
+                            </td>
+                            <td style="width:75px">
+                                Fecha
+                            </td>
+                            <td style="width:65px">
+                                Número de ticket
+                            </td>
+                            <td style="width:93px">
+                                Aerolínea
+                            </td>
+                            <td>
+                                Número de factura
+                            </td>
+                            <td style="width:290px">
+                                Descripción
+                            </td>
+                            <td style="width: 77px;">
+                                Seguimiento
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(x => x.TipoConsulta.Equals(3)))
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.Estado == 1)
+                                    {<text>Abierto</text>}
+                                else
+                                {<text>Cerrado</text>}
+                                </td>
+                                <td>
+                                    
+                                    @String.Concat(item.FechaCreacion.Day.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Month.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Year.ToString(), " ", item.FechaCreacion.Hour.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Minute.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Second.ToString().PadLeft(2, '0'))
+
+                                </td>
+                                <td>
+                                    @item.NumeroTicket
+                                </td>
+                                <td>
+                                    @item.NombreAerolinea
+                                </td>
+                                <td class="text-left">
+                                    @item.Asunto
+
+                                </td>
+                                <td class="text-left">
+                                    <p class="descrption">
+                                        @item.Mensaje
+                                    </p>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".detalleTicket" onclick="DetalleTicket(@item.Id);">
+                                        <img src="~/images/buscar.png" alt="Ver detalles">
+                                    </button>
+                                    @if (item.Seguimiento == 1)
+                                    {
+                                        <div class="new">
+                                            Nuevo
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!------>
+            <div id="showFactura" class="radio__content">
+                <table class="nowrap" id="tbltckfactura" style="width:100%">
+                    <thead>
+                        <tr>
+                            <td>
+                                Estado
+                            </td>
+                            <td>
+                                Fecha
+                            </td>
+                            <td>
+                                Número de ticket
+                            </td>
+                            <td style="width:104px">
+                                Aerolínea
+                            </td>
+                            <td>
+                                Número de factura
+                            </td>
+                            <td style="width:290px">
+                                Descripción
+                            </td>
+                            <td style="width: 77px;">
+                                Seguimiento
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(x => x.TipoConsulta.Equals(4)))
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.Estado == 1)
+                                    {<text>Abierto</text>}
+                                else
+                                {<text>Cerrado</text>}
+                                </td>
+                                <td style="width:75px">
+                                   
+                                    @String.Concat(item.FechaCreacion.Day.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Month.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Year.ToString(), " ", item.FechaCreacion.Hour.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Minute.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Second.ToString().PadLeft(2, '0'))
+
+                                </td>
+                                <td style="width:65px">
+                                    @item.NumeroTicket
+                                </td>
+                                <td style="width:93px">
+                                    @item.NombreAerolinea
+                                </td>
+                                <td class="text-left">
+                                    @item.Asunto
+
+                                </td>
+                                <td class="text-left" style="width:290px">
+                                    <p class="descrption">
+                                        @item.Mensaje
+                                        </p>
+                                </td>
+                                <td style="width: 77px;">
+                                    <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".detalleTicket" onclick="DetalleTicket(@item.Id);">
+                                        <img src="~/images/buscar.png" alt="Ver detalles">
+                                    </button>
+                                    @if (item.Seguimiento == 1)
+                                    {
+                                        <div class="new">
+                                            Nuevo
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!------>
+            <div id="showPQR" class="radio__content">
+                <table class="nowrap" id="tbltckpqr" style="width:100%">
+                    <thead>
+                        <tr>
+                            <td>
+                                Estado
+                            </td>
+                            <td style="width: 75px;">
+                                Fecha
+                            </td>
+                            <td style="width:65px">
+                                Número de Ticket
+                            </td>
+                            <td style="width:93px">
+                                Aerolínea
+                            </td>
+                            <td>
+                                Asunto
+                            </td>
+                            <td style="width:290px">
+                                Descripción
+                            </td>
+                            <td style="width: 77px;">
+                                Seguimiento
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(x => x.TipoConsulta.Equals(5)))
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.Estado == 1)
+                                    {<text>Abierto</text>}
+                                else
+                                {<text>Cerrado</text>}
+                                </td>
+                                <td style="width:75px">
+                                  
+                                    @String.Concat(item.FechaCreacion.Day.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Month.ToString().PadLeft(2, '0'), "/", item.FechaCreacion.Year.ToString(), " ", item.FechaCreacion.Hour.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Minute.ToString().PadLeft(2, '0'), ":", item.FechaCreacion.Second.ToString().PadLeft(2, '0'))
+
+                                </td>
+                                <td style="width:65px">
+                                    @item.NumeroTicket
+                                </td>
+                                <td style="width:93px">
+                                    @item.NombreAerolinea
+                                </td>
+                                <td class="text-left">
+                                    @item.Asunto
+
+                                </td>
+                                <td class="text-left" style="width:290px">
+                                    <p class="descrption">
+                                        @item.Mensaje
+                                    </p>
+                                </td>
+                                <td style="width: 77px;">
+                                    <button type="button" class="btn btn--simple d-inline float-left p-1" data-toggle="modal" data-target=".detalleTicket" onclick="DetalleTicket(@item.Id);">
+                                        <img src="~/images/buscar.png" alt="Ver detalles">
+                                    </button>
+                                    @if (item.Seguimiento == 1)
+                                    {
+                                        <div class="new">
+                                            Nuevo
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade detalleTicket" tabindex="-1" role="dialog" aria-labelledby="detalleTicket" aria-hidden="true">
+    <div class="modal-dialog modal--big">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-2">
+                        <button type="button" class="btn btn-block" data-dismiss="modal">
+                            <img src="~/images/cerra.png" alt="Cerrar" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row" id="divDetalleTicket">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

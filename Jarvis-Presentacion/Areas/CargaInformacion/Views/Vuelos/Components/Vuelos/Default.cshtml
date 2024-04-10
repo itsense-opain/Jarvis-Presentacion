@@ -1,0 +1,206 @@
+﻿@model IEnumerable<Opain.Jarvis.Dominio.Entidades.OperacionVueloOtd>
+
+@{
+    ViewData["Title"] = "Listado";
+}
+
+
+<table class="table" id="tblVuelos" style="width:100%">
+    <thead>
+        <tr>
+            <th style="display:none;">
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+            <th>Editar formato </th>
+
+            <th style="display:none;">
+                @Html.DisplayNameFor(model => model.Destino)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreAerolinea)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Matricula)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Vuelo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Hora)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConfirmacionPasajeros)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConfirmacionTransitos)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.ConfirmacionManifiesto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConfirmacionGenDec)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="display:none;">
+                    @Html.DisplayFor(modelItem => item.Tipo)
+                </td>
+                <td>
+                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarVistaVuelo(@item.Id, 'Actualizar');">
+                        <img src="~/images/editar.png" alt="Editar" />
+                    </button>
+                    @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarVistaVuelo(@item.Id, 'Eliminar');">
+                            Eliminar
+                        </button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarVistaVuelo(@item.Id, 'Detalle');">
+                            Ver
+                        </button>*@
+                </td>
+
+                <td style="display:none;">
+                    @Html.DisplayFor(modelItem => item.Destino)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreAerolinea)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Matricula)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vuelo)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.Fecha)*@
+                    @item.Fecha.Day.ToString().PadLeft(2, '0')/@item.Fecha.Month.ToString().PadLeft(2, '0')/@item.Fecha.Year.ToString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Hora)
+                </td>
+                <td>
+                    @if (item.PDFPasajeros == 1 || item.PDFPasajeros == 2)
+                    {
+                        if (item.ConfirmacionPasajeros == 1)
+                        {
+                            if (item.PDFPasajeros == 1)
+                            {
+                                <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivoNuevo('PASAJEROS', '@item.ArchivoPasajeros');">
+                                    <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                                </button>
+                            }
+                            else if (item.PDFPasajeros == 2)
+                            {
+                                <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo2('PASAJEROS', '@item.ArchivoPasajeros',@item.Id);">
+                                    <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerListado(@item.Id, 'PASAJEROS',1);">
+                                    <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                                </button>
+                            }
+
+
+                        }
+                        <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarArchivo(@item.Id, 'PASAJEROS');">
+                            <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> <span></span>
+                        </button>
+                    }
+                    else
+                    {
+                        if (item.ConfirmacionPasajeros == 1)
+                        {
+                            <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerListado(@item.Id, 'PASAJEROS', 0);">
+                                <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                            </button>
+                        }
+                        <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarListado(@item.Id, 'PASAJEROS');">
+                            <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> <span></span>
+                        </button>
+                    }
+
+                </td>
+                <td>
+                    @*@if (item.PDFPasajeros == 1 || item.PDFPasajeros == 2)
+                        {
+                            if (item.ConfirmacionPasajeros == 1)
+                            {
+                                if (item.PDFPasajeros == 1)
+                                {
+                                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivoNuevo('TRANSITOS', '@item.ArchivoTransito');">
+                                        <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                                    </button>
+                                }
+                                else if (item.PDFPasajeros == 2)
+                                {
+                                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo2('TRANSITOS', '@item.ArchivoTransito',@item.Id);">
+                                        <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerListado(@item.Id, 'TRANSITOS',1);">
+                                        <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                                    </button>
+                                }
+
+
+                            }
+                            <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarArchivo(@item.Id, 'TRANSITOS');">
+                                <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> <span></span>
+                            </button>
+                        }
+                        else
+                        {*@
+
+
+
+                    @if (item.ConfirmacionTransitos == 1)
+                    {
+                        <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerListado(@item.Id, 'TRANSITOS', 0);">
+                            <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                        </button>
+                    }
+                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarListado(@item.Id, 'TRANSITOS');">
+                        <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> <span></span>
+                    </button>
+                    @*}*@
+
+
+                </td>
+
+                <td>
+                    @if (item.ConfirmacionManifiesto == 1)
+                    {
+                        <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo('NA', '@item.ArchivoManifiesto');">
+                            <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                        </button>
+                    }
+                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarArchivo(@item.Id, 'MANIFIESTO');">
+                        <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> <span></span>
+                    </button>
+                </td>
+                <td>
+                    @if (item.ConfirmacionGenDec == 1)
+                    {
+                        <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="VerArchivo('NA', '@item.ArchivoGendec');">
+                            <img src="~/images/buscar.png" alt="Mostrar detalles" />
+                        </button>
+                    }
+                    <button type="button" class="btn btn--simple" data-toggle="modal" data-target="#accionesVuelo" onclick="CargarArchivo(@item.Id, 'GENDEC');">
+                        <img src="~/images/subir.png" alt="Subir archivo" class="img-fluid" /> <span></span>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
